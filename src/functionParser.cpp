@@ -2,15 +2,32 @@
 #include <string>
 #include <cmath>
 #include <stack>
-
+#include <algorithm> // for std::any_of
 using namespace std;
 
+/*
+ * Class to parse mathematical functions given as strings
+ * Supports +, -, *, /, ^ operators and respects operator precedence
+ * Example: "3^2 + 9*2 + 2 - 9/2"
+*/
 
 class FunctionParser{
+
+    string variableToValue(string function, char variable, double value){
+        // Replace 'x' or other variable with its value in the function string
+        string valueStr = to_string(value); 
+
+        for (size_t i = 0; i < function.size(); i++) {
+            if (function[i] == variable) {
+                function.replace(i, 1, valueStr); 
+                i += valueStr.size() - 1;
+            }
+        }
+        return function;
+    }
+
     public:
 
-    
-    
     // Aux function: Evaluete operation between to doubles
     double evaluateOp(double a, char op, double b){
         switch(op){
@@ -31,19 +48,47 @@ class FunctionParser{
         return -1;
     }
 
+    /* Polimorfism for parse, to handle functions without specifying the variable */
+    double parse(const string& funcWithoutVar, double value){
+        // Try to detect variable in the function string
+        for(char c : funcWithoutVar){
+            if(isalpha(static_cast<unsigned char>(c))){
+                cout << "Variable detected: " << c << endl;
+                return parse(funcWithoutVar, c, value);
+            }
+        }
+        // No variable detected, parse directly
+        return parse(funcWithoutVar, 'x', value);
+
+    }
+
+    // Polimorfism for parse, to handle functions without variable and value
+    double parse(const string& funcWithoutVar){
+        return parse(funcWithoutVar, 0);
+    }
+
     // Main function to parse
-    double parse(const string& function, double value){
-        cout << "Iniciando o parsing..." << endl;
+    double parse(const string& funcWithVar, char variable, double value){
+        cout << "Parsing function: " << funcWithVar << " with variable " << variable << " = " << value << endl;
+        string func = variableToValue(funcWithVar, variable, value);
+
+        if(!any_of(func.begin(), func.end(), ::isalpha)){
+            cout << "Function after variable substitution: " << func << endl;
+        }
+        else{
+            cerr << "Error: Variable substitution failed, variable or characters still present in function." << endl;
+            return NAN;
+        }
 
         stack<double> output;
         stack<char> operands;
 
-        for(int i = 0; i < function.length(); i++){
-            if(function[i] == ' ') continue;
+        for(int i = 0; i < func.length(); i++){
+            if(func[i] == ' ') continue;
 
             string num_str;
-            while((i < function.length()) && (isdigit(function[i]) || function[i] == '.')){
-                num_str += function[i];
+            while((i < func.length()) && (isdigit(func[i]) || func[i] == '.')){
+                num_str += func[i];
                 i++;
             }
             if(!num_str.empty()){
@@ -51,8 +96,8 @@ class FunctionParser{
                 i--;
             }
             else{
-                char op = function[i];
-                cout << "Op: " << op << endl;
+                char op = func[i];
+    
                 if(operands.empty() || (precedence(op) > precedence(operands.top()))){
                     operands.push(op);
                 }
@@ -70,11 +115,6 @@ class FunctionParser{
                 }
             }
         }
-        // DEPURAÇÃO
-        // while(!output.empty()){
-        //     cout << output.top() << endl;
-        //     output.pop();
-        // }
 
         while(!operands.empty()){
             char op = operands.top(); operands.pop();
@@ -94,17 +134,32 @@ int main(){
 
     FunctionParser fParser;
 
-    string funcao = "3^2 + 9*2 + 2 - 9/2";
-    double resultado = fParser.parse(funcao, 4);
-    cout << "O resultado é " << resultado << endl;
+    // First test
+    cout << "\nFirst Test:" << endl;
+    string func1 = "y^2 + y + 1";
+    char variable1 = 'y';
+    double value1 = 10;
+    double result1 = fParser.parse(func1, variable1, value1);
+    cout << "The final result is: " << result1 << endl;
 
-    // Depuraçao 
-    // cout << "A funcao eh: " << funcao << endl; 
-    // double resultado = fParser.parse(funcao, 4);
-    // cout << "O resultado é " << resultado << endl;
-    // fParser.evaluateOp(4, '/', 0);
-    // cout << fParser.precedence('+') << endl;
+    // Second test
+    cout << "\nSecond Test:" << endl;
+    string func2 = "3^2 + 9*2 + 2 - 9/2";
+    double value2 = 0; // No variable in this function
+    double result2 = fParser.parse(func2, value2);
+    cout << "The final result is: " << result2 << endl;
 
+    // Third test
+    cout << "\nThird Test:" << endl;
+    string func3 = "2^3.2 + 4 - 5";
+    double result3 = fParser.parse(func3);
+    cout << "The final result is: " << result3 << endl;
 
+    // Fourth test (*proposital error to test variable detection*)
+    cout << "\nFourth Test:" << endl;
+    string func4 = "fdx^3 + 2*x^2 + 3*x + 4";
+    double value4 = 2;
+    double result4 = fParser.parse(func4, value4);
+    cout << "The final result is: " << result4 << endl;
     return 0;
 }
