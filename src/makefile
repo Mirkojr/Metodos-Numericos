@@ -3,10 +3,10 @@ DIRETORIO = "bin"
 
 all: 
 	mkdir -p $(DIRETORIO)
-	g++ -o $(DIRETORIO)/functionParser functionParser.cpp
+	g++ -o $(DIRETORIO)/main.exe *.cpp
 
 run: 
-	./bin/functionParser
+	./bin/main.exe
 
 clean:
 	rm -rf "bin"
