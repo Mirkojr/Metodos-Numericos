@@ -8,14 +8,12 @@ using namespace std;
 
 int main(){
 
-    Metodos metodos("x^2 + 3*x + 1");
+    Metodos metodos("x^3 - 9 * x + 3");
     metodos.printFunc();
 
     FunctionParser fParser;
 
-    cout << fParser.parse("x^2 + 3*x + 1", 3) << endl;
-
-    metodos.bissecao(3, 5, 2, 3);
+    cout << metodos.bissecao(0, 1, 10*pow(10, -4), 10) << endl;
 
     return 0;
 }

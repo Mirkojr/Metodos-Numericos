@@ -9,6 +9,8 @@ class Metodos{
     string func;
     FunctionParser fParser;
 
+    double F(double x);
+
     public:
     Metodos(const string& func);
     void printFunc();
