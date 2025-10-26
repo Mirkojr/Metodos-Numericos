@@ -10,11 +10,13 @@ class Metodos{
     FunctionParser fParser;
 
     double F(double x);
+    double choose(double a, double b);
 
     public:
     Metodos(const string& func);
     void printFunc();
-    double bissecao( double a, double b, double epslon, int maxIter);
+    double bissecao( double a, double b, double epsilon, int maxIter);
+    double falsePosition(double a, double b, double epsilon1, double epsilon2, int maxIter);
 };
 
 #endif 

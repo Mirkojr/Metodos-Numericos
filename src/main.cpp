@@ -13,8 +13,10 @@ int main(){
 
     FunctionParser fParser;
 
-    cout << metodos.bissecao(0, 1, 10*pow(10, -4), 10) << endl;
-
+    // cout << metodos.bissecao(0, 1, 10*pow(10, -4), 10) << endl;
+    double eps = 0.5 * pow(10, -3);
+    double resultFalsePosition = metodos.falsePosition(0, 1, eps, eps, 3);
+    cout << "Posicao falsa: " << resultFalsePosition << endl;
     return 0;
 }
 
