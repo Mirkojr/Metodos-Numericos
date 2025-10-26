@@ -9,12 +9,24 @@ Metodos::Metodos(const string& func){
     this->func = func;
 }
 
+void Metodos::setFunc(string func){
+    this->func = func;
+}
+
+void Metodos::setPhi(string phi){
+    this->phiFunc = phi;
+}
+
 void Metodos::printFunc(){
     cout << this->func << endl;
 }
 
 double Metodos::F(double x){
     return this->fParser.parse(this->func, x);
+}
+
+double Metodos::Phi(double x){
+    return this->fParser.parse(this->phiFunc, x);
 }
 
 double Metodos::bissecao( double a, double b, double epslon, int maxIter){
@@ -61,8 +73,8 @@ double Metodos::falsePosition(double a, double b, double epsilon1, double epsilo
     double Fa = F(a);
     double Fb = F(b);
 
-    cout << Fa << endl;
-    cout << Fb << endl;
+    cout << "Fa: " << Fa << endl;
+    cout << "Fb: " << Fb << endl;
 
     if (Fa * Fb > 0){
         cout << "This function don't change signals between a and b." << endl;
@@ -104,4 +116,21 @@ double Metodos::falsePosition(double a, double b, double epsilon1, double epsilo
     }
     
     return root;
+}
+
+double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxIter){
+
+    //check if Phi was defined ** required **
+    if (this->phiFunc.empty()) return NAN;
+
+
+    if(abs(F(x0)) < epsilon1) return x0;
+
+    int k = 1;
+    while(true){
+        double x1 = Phi(x0);
+        if(abs(F(x1)) < epsilon1 || abs(x1-x0) < epsilon2 || k >= maxIter) return x1;
+        x0 = x1;
+        k++;
+    }
 }

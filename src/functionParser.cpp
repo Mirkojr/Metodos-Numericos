@@ -87,32 +87,63 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
             num_str += func[i];
             i++;
         }
+
         if(!num_str.empty()){
             output.push(stod(num_str));
             i--;
         }
+
+        else if(func[i] == '('){
+            operands.push(func[i]);
+        }    
+
+        else if(func[i] == ')'){
+            while(!operands.empty() && operands.top() != '('){
+
+                if(output.size() < 2){
+                    cerr << "Insufficient operands" << endl;
+                    return NAN;
+                }
+
+                double val2 = output.top(); output.pop();
+                double val1 = output.top(); output.pop();
+
+                char op = operands.top(); operands.pop();
+
+                double result = evaluateOp(val1, op, val2);
+                if(isnan(result)) return NAN;
+                output.push(result);
+            }
+
+            if(!operands.empty() && operands.top() == '('){
+                operands.pop();
+            }else{
+                cerr << "unbalanced parenteshis" << endl;
+                return NAN;
+            }
+        }
         else{
             char op = func[i];
 
-            if(operands.empty() || (precedence(op) > precedence(operands.top()))){
-                operands.push(op);
-            }
-            else{
-                while(!operands.empty() && precedence(op) <= precedence(operands.top())){
-                    char op = operands.top(); operands.pop();
-                    double val2 = output.top(); output.pop();
-                    double val1 = output.top(); output.pop();
+           while(!operands.empty() && operands.top() != '(' && precedence(operands.top()) >= precedence(op)){
+                char op = operands.top(); operands.pop();
+                double val2 = output.top(); output.pop();
+                double val1 = output.top(); output.pop();
 
-                    double result = evaluateOp(val1, op, val2);
-                    // cout << "Avaliando ops: " << val1 << " " << op << " " << val2 << " result " << result << endl;
-                    output.push(result);
-                }
-                operands.push(op);
+                double result = evaluateOp(val1, op, val2);
+                // cout << "Avaliando ops: " << val1 << " " << op << " " << val2 << " result " << result << endl;
+                output.push(result);
             }
+            operands.push(op);
         }
     }
 
     while(!operands.empty()){
+        if (operands.top() == '('){
+            cerr << " Sintax Error" << endl; 
+            return NAN;
+        }
+        
         char op = operands.top(); operands.pop();
         double val2 = output.top(); output.pop();
         double val1 = output.top(); output.pop();
