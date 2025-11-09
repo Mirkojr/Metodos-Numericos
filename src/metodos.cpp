@@ -143,37 +143,76 @@ double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxI
     }
 }
 
- double Metodos::newtonRaphson(double x0, double epsilon1, double epsilon2, int maxIter){
+ Resultado Metodos::newtonRaphson(double x0, double epsilon1, double epsilon2, int maxIter){
     
-    if(this->derivate.empty()) return (cerr << "Error: Must have a derivate defined to calculate newtonRaphson" << endl, NAN);
+    if(this->derivate.empty()){
+        cerr << "Error: Must have a derivate defined to calculate newtonRaphson";
+        return {NAN, 0, NAN};
+    }
 
-    if(abs(F(x0)) < epsilon1) return x0;
+    if(abs(F(x0)) < epsilon1) return {x0, 0, 0.0};
 
     int k = 1;
     double x1;
     while(true){
         x1 = x0 - F(x0)/D(x0);
-        if(abs(F(x1)) < epsilon1 || abs(x1-x0) < epsilon2 || k >= maxIter) return x1;
+        double erro = abs(x1 - x0);
+        if(abs(F(x1)) < epsilon1 || erro < epsilon2 || k >= maxIter) return {x1, k, erro};
         x0 = x1;
         k++;
     }
  }
 
- double Metodos::secante(double x0, double x1, double epsilon1, double epsilon2, int maxIter){
-    if(abs(F(x0)) < epsilon1) return x0;
-    if(abs(F(x1)) < epsilon1 || abs(x1-x0) < epsilon2) return x1;
+ Resultado Metodos::secante(double x0, double x1, double epsilon1, double epsilon2, int maxIter){
+    if(abs(F(x0)) < epsilon1) return {x0, 0, 0.0};
+    if(abs(F(x1)) < epsilon1 || abs(x1-x0) < epsilon2) return {x1, 0, abs(x1-x0)};
 
     double x2;
     int k = 1;
     while(true){
         x2 = x1 - (F(x1)/(F(x1)-F(x0)) * (x1-x0));
-        if(abs(F(x2)) < epsilon1 || abs(x2-x1) < epsilon2 || k >= maxIter){
-            return x2;
+        double erro = abs(x2 - x1);
+        if(abs(F(x2)) < epsilon1 || erro < epsilon2 || k >= maxIter){
+            return {x2, k, erro};
         }
         x0 = x1;
         x1 = x2;
         k++;
     }
  }
+
+ Resultado Metodos::newtonRaphsonModificado(double x0, double epsilon1, double epsilon2, int maxIter) {
+    
+    if (this->derivate.empty()){
+        cerr << "Error: Must have a derivate defined to calculate modified Newton" << endl;
+        return {NAN, 0, NAN};
+    }
+
+    // Calcula a derivada apenas uma vez (fixa)
+    double d0 = D(x0);
+    if (d0 == 0){
+        cerr << "Error: f'(x0) = 0 in modified Newton" << endl;
+        return {NAN, 0, NAN};
+    }
+
+    // Teste inicial
+    if (abs(F(x0)) < epsilon1){
+        return {x0, 0, 0.0};
+    }
+
+    int k = 1;
+    double x1;
+
+    while (true) {
+        // Usa a derivada fixa d0
+        x1 = x0 - F(x0) / d0;
+
+        double erro = abs(x1 - x0);
+        if (abs(F(x1)) < epsilon1 || erro < epsilon2 || k >= maxIter) return {x1, k, erro};
+        
+        x0 = x1;
+        k++;
+    }
+}
 
  

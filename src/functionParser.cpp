@@ -79,7 +79,7 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
     stack<double> output;
     stack<char> operands;
 
-    for(int i = 0; i < func.length(); i++){
+    for(size_t i = 0; i < func.length(); i++){
         if(func[i] == ' ') continue;
 
         string num_str;
