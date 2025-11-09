@@ -17,6 +17,10 @@ void Metodos::setPhi(string phi){
     this->phiFunc = phi;
 }
 
+void Metodos::setDerivate(string derivate){
+    this->derivate = derivate; double newtonRaphson(double x0, double epsilon1, double epsilon2, int maxIter);
+}
+
 void Metodos::printFunc(){
     cout << this->func << endl;
 }
@@ -29,6 +33,10 @@ double Metodos::Phi(double x){
     return this->fParser.parse(this->phiFunc, x);
 }
 
+double Metodos::D(double x){
+    return this->fParser.parse(this->derivate, x);
+}
+
 double Metodos::bissecao( double a, double b, double epslon, int maxIter){
     double Fa = F(a);
     double Fb = F(b);
@@ -37,7 +45,7 @@ double Metodos::bissecao( double a, double b, double epslon, int maxIter){
     cout << Fb << endl;
 
     if (Fa * Fb > 0){
-        cout << "This function don't change signals between a and b." << endl;
+        cout << "Error: This function don't change signals between a and b." << endl;
         return NAN;
     }
 
@@ -77,7 +85,7 @@ double Metodos::falsePosition(double a, double b, double epsilon1, double epsilo
     cout << "Fb: " << Fb << endl;
 
     if (Fa * Fb > 0){
-        cout << "This function don't change signals between a and b." << endl;
+        cout << "Error: This function don't change signals between a and b." << endl;
         return NAN;
     }
 
@@ -91,7 +99,7 @@ double Metodos::falsePosition(double a, double b, double epsilon1, double epsilo
     while(true){
         x = (a*F(b) - b*(F(a)))/(F(b)-F(a));
         Fx = F(x);
-        cout << "K :" << k << endl;
+
         if((abs(Fx) < epsilon2) || (k>=maxIter)){
             root = x;
             break;
@@ -121,7 +129,7 @@ double Metodos::falsePosition(double a, double b, double epsilon1, double epsilo
 double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxIter){
 
     //check if Phi was defined ** required **
-    if (this->phiFunc.empty()) return NAN;
+    if (this->phiFunc.empty()) return (cerr << "Error: Must have a phi defined to calculate fixedPoint" << endl, NAN);
 
 
     if(abs(F(x0)) < epsilon1) return x0;
@@ -134,3 +142,36 @@ double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxI
         k++;
     }
 }
+
+ double Metodos::newtonRaphson(double x0, double epsilon1, double epsilon2, int maxIter){
+    
+    if(this->derivate.empty()) return (cerr << "Error: Must have a derivate defined to calculate newtonRaphson" << endl, NAN);
+
+    if(abs(F(x0)) < epsilon1) return x0;
+
+    int k = 1;
+    double x1;
+    while(true){
+        x1 = x0 - F(x0)/D(x0);https://github.com/Mirkojr/Metodos-Numericos
+        if(abs(F(x1)) < epsilon1 || abs(x1-x0) < epsilon2 || k >= maxIter) return x1;
+        x0 = x1;
+        k++;
+    }
+ }
+
+ double Metodos::secante(double x0, double x1, double epsilon1, double epsilon2, int maxIter){
+    if(abs(F(x0)) < epsilon1) return x0;
+    if(abs(F(x1)) < epsilon1 || abs(x1-x0) < epsilon2) return x1;
+
+    double x2;
+    int k = 1;
+    while(true){
+        x2 = x1 - (F(x1)/(F(x1)-F(x0)) * (x1-x0));
+        if(abs(F(x2)) < epsilon1 || abs(x2-x1) < epsilon2 || k >= maxIter){
+            return x2;
+        }
+        x0 = x1;
+        x1 = x2;
+        k++;
+    }
+ }
