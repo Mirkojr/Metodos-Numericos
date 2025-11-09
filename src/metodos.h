@@ -28,6 +28,7 @@ class Metodos{
     double fixedPoint(double x0, double epsilon1, double epsilon2, int maxIter);
     double newtonRaphson(double x0, double epsilon1, double epsilon2, int maxIter);
     double secante(double x0, double x1, double epsilon1, double epsilon2, int maxIter);
+    double newtonRaphsonModificado(double x0, double epsilon1, double epsilon2, int maxIter);
 };
 
 #endif 

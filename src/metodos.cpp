@@ -152,7 +152,7 @@ double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxI
     int k = 1;
     double x1;
     while(true){
-        x1 = x0 - F(x0)/D(x0);https://github.com/Mirkojr/Metodos-Numericos
+        x1 = x0 - F(x0)/D(x0);
         if(abs(F(x1)) < epsilon1 || abs(x1-x0) < epsilon2 || k >= maxIter) return x1;
         x0 = x1;
         k++;
@@ -175,3 +175,5 @@ double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxI
         k++;
     }
  }
+
+ 
