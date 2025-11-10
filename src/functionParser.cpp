@@ -61,8 +61,22 @@ double FunctionParser::parse(const string& funcWithoutVar, double value){
 
 }
 
+// Aux function to check for variables in function string
+bool isAnyVariable(string func){
+    for(char c : func){
+        if(isalpha(static_cast<unsigned char>(c))){
+            return true;
+        }
+    }
+    return false;
+}
+
 // Polimorfism for parse, to handle functions without variable and value
 double FunctionParser::parse(const string& funcWithoutVar){
+    if(isAnyVariable(funcWithoutVar)){
+        cerr << "Error: Function contains variables but no variable/value provided." << endl;
+        return NAN;
+    }
     return parse(funcWithoutVar, 0);
 }
 
