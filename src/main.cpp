@@ -27,63 +27,73 @@ void testMethods(){
     cout << "----------------------------------" << endl;
 }
 
+void testParser(){
+    FunctionParser parser;
+
+    auto test = [&](string func, char var, double val){
+        double r = parser.parse(func, var, val);
+        cout << "Func: " << func 
+             << " | var=" << var 
+             << " | val=" << val 
+             << " | result=" << r << endl;
+    };
+
+    cout << "\n===== TESTES DO PARSER =====\n";
+
+    // Teste básico do usuário
+    test("3 - (-2)", 'x', 2.0);           // esperado: 5
+
+    // Negativos em multiplicação
+    test("3 * (-2)", 'x', 0);            // esperado: -6
+    test("(-3) * (-2)", 'x', 0);         // esperado: 6
+    test("-(3*2)", 'x', 0);              // esperado: -6
+
+    // Somatório
+    test("1 + 2 + 3 + 4", 'x', 0);       // esperado: 10
+
+    // Mistura com divisão
+    test("10 / (2 + 3)", 'x', 0);        // esperado: 2
+
+    // Potenciação
+    test("2^3", 'x', 0);                 // esperado: 8
+    test("2^(3+1)", 'x', 0);             // esperado: 16
+    test("(-2)^3", 'x', 0);              // esperado: -8
+
+    // Expressões aninhadas
+    test("3*(2 + 5) - 4/2", 'x', 0);     // esperado: 19
+
+    // Teste com variáveis
+    test("x + 3", 'x', 10);              // esperado: 13
+    test("2*x + 1", 'x', 4);             // esperado: 9
+    test("3*(x - 2)", 'x', 5);           // esperado: 9
+
+    // Expressões mistas com variável negativa
+    test("3 * (x - (-2))", 'x', -4);     // esperado: 3 * (-4 + 2) = 3 * (-2) = -6
+
+    // Euler
+    test("e", 'x', 0);                   // esperado: exp(1)
+    test("2*e", 'x', 0);                 // esperado: 2*exp(1)
+    test("e + 1", 'x', 0);               // esperado: exp(1)+1
+
+    // Mais combinações
+    test("-(x)", 'x', 6);                // esperado: -6
+    test("-(-x)", 'x', 6);               // esperado: 6
+    test("(-x) * 3", 'x', 5);            // esperado: -15
+    test("3 + -(2)", 'x', 0);            // esperado: 1
+    test("3 + -2", 'x', 0);              // esperado: 1
+
+    // Avaliação mais longa
+    test("10 - (2 + 3*4) + (-2)", 'x', 0);  // esperado: 10 - (2+12) -2 = -6
+
+    double value = parser.parse("x+3");
+    cout << value << endl;
+    cout << "===== FIM DOS TESTES =====\n";
+}
+
+
 int main() {
 
-    testMethods();
-    cout << "==== Sistema de Calculo de Deslocamento Sismico ====\n\n";
-
-    int n;
-    double epsilon;
-
-    // Entrada do número de valores de a
-    cout << "Informe o numero de valores de a: ";
-    cin >> n;
-
-    vector<double> valoresA(n);
-
-    // Entradas dos valores de a
-    for (int i = 0; i < n; i++) {
-        cout << "Informe o valor de a[" << i << "]: ";
-        cin >> valoresA[i];
-    }
-
-    // Entrada da precisão
-    cout << "Informe o valor da precisao e: ";
-    cin >> epsilon;
-
-    // Aproximação inicial padrão
-    double d0 = 0.5;
-
-    // Aqui serão feitos os cálculos para cada método
-    cout << "\nProcessando...\n\n";
-
-    // LOOP para cada valor de a
-    for (int i = 0; i < n; i++) {
-
-        double a = valoresA[i];
-
-        cout << "=== Valor a = " << a << " ===\n";
-
-        // (a) Newton-Raphson (A IMPLEMENTAR)
-        // double d_newton = newton(a, d0, epsilon);
-
-        // (b) Newton Modificado (A IMPLEMENTAR)
-        // double d_newton_mod = newton_mod(a, d0, epsilon);
-
-        // (c) Secante (A IMPLEMENTAR)
-        // double d_secante = secante(a, d0, epsilon);
-
-        // (e) Mostrar quadro resposta (A IMPLEMENTAR)
-        // printQuadroResposta(...);
-
-        cout << endl;
-    }
-
-    // (f) Mostrar quadro comparativo geral (A IMPLEMENTAR)
-    // printQuadroComparativo(...);
-
-    // (g) Análise da variação de a (A IMPLEMENTAR)
-    // analisarVariacaoA(...);
-
+    //testMethods();
+    testParser();
     return 0;
 }

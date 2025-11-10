@@ -20,7 +20,7 @@ class FunctionParser{
     double parse(const string& funcWithVar, char variable, double value);
     void test();
 };
-
+ 
 
 
 #endif
