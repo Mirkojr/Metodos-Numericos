@@ -93,7 +93,7 @@ void testParser(){
 
 int main() {
 
-    //testMethods();
+    testMethods();
     testParser();
     return 0;
 }

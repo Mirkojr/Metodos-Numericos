@@ -9,7 +9,7 @@
 
 using namespace std;
 
-// --- Substitui variável e 'e' de forma segura (constrói uma nova string) ---
+// --- Substitui variável e 'e' ---
 string FunctionParser::variableToValue(string function, char variable, double value){
     string result;
     result.reserve(function.size() + 32);
@@ -85,6 +85,7 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
                 ++i;
             }
 
+            // Coleta o número completo
             while (i < func.length() && (isdigit((unsigned char)func[i]) || func[i] == '.')) {
                 num_str.push_back(func[i]);
                 ++i;
@@ -228,6 +229,15 @@ double FunctionParser::parse(const string& funcWithoutVar) {
     return parse(funcWithoutVar, ' ', 0);
 }
 
-double FunctionParser::parse(const string& funcWithoutVar, double value) {
+double FunctionParser::parse(const string& funcWithoutVar, double value){
+    // Try to detect variable in the function string
+    for(char c : funcWithoutVar){
+        if(isalpha(static_cast<unsigned char>(c))){
+            // cout << "Variable detected: " << c << endl;
+            return parse(funcWithoutVar, c, value);
+        }
+    }
+    // No variable detected, parse directly
     return parse(funcWithoutVar, 'x', value);
 }
+
