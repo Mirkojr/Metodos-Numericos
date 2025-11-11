@@ -91,9 +91,74 @@ void testParser(){
 }
 
 
+    
 int main() {
 
-    testMethods();
-    testParser();
+    cout << "==== Sistema de Calculo de Deslocamento Sismico ====\n\n";
+
+    Metodos metodo("");
+    int n;
+    double epsilon;
+    const int maxIter = 100;
+
+    // Entrada do número de valores de a
+    cout << "Informe o numero de valores de a: ";
+    cin >> n;
+
+    vector<double> valoresA(n);
+
+    // Entradas dos valores de a
+    for (int i = 0; i < n; i++) {
+        cout << "Informe o valor de a[" << i << "]: ";
+        cin >> valoresA[i];
+    }
+
+    // Entrada da precisão
+    cout << "Informe o valor da precisao e: ";
+    cin >> epsilon;
+
+    // Aproximação inicial padrão
+    double d0 = 0.5;
+
+    // Aqui serão feitos os cálculos para cada método
+    cout << "\nProcessando...\n\n";
+
+    // LOOP para cada valor de a
+    for (int i = 0; i < n; i++) {
+
+        double a = valoresA[i];
+        
+        cout << "=== Valor a = " << a << " ===\n";
+
+        // Definir funções para o valor atual de a
+        string func = to_string(a) + " * e ^ d - 4 * d^2";  // Função principal
+        cout << "  func string: '" << func << "'\n";
+        metodo.setFunc(func);
+        string funcDerivate = to_string(a) + " * e ^ d - 8 * d"; // Derivada
+        cout << "  deriv string: '" << funcDerivate << "'\n";
+        metodo.setDerivate(funcDerivate);
+
+        // (a) Newton-Raphson
+        Resultado d_newton = metodo.newtonRaphson(d0, epsilon, epsilon, maxIter);
+        cout << "Newton-Raphson: Raiz = " << d_newton.raiz << ", Iteracoes = " << d_newton.iteracoes << ", Erro = " << d_newton.erro << endl;
+        // (b) Newton Modificado (A IMPLEMENTAR)
+        double d_newton_mod = metodo.newtonRaphsonModificado(d0, epsilon, epsilon, maxIter).raiz;
+        cout << "Newton-Raphson Modificado: Raiz = " << d_newton_mod << " Iteracoes = " << d_newton.iteracoes << ", Erro = " << d_newton.erro << endl;
+        // (c) Secante (A IMPLEMENTAR)
+        double d_secante = metodo.secante(d0, d0 + 0.1, epsilon, epsilon, maxIter).raiz;
+        cout << "Secante: Raiz = " << d_secante << " Iteracoes = " << d_newton.iteracoes << ", Erro = " << d_newton.erro << endl;
+
+        // (e) Mostrar quadro resposta (A IMPLEMENTAR)
+        // printQuadroResposta(...);
+        
+        cout << endl;
+    }
+    cout << "==== Fim do Processamento ====\n";
+    // (f) Mostrar quadro comparativo geral (A IMPLEMENTAR)
+    // printQuadroComparativo(...);
+
+    // (g) Análise da variação de a (A IMPLEMENTAR)
+    // analisarVariacaoA(...);
+
     return 0;
 }

@@ -60,6 +60,7 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
     string func = variableToValue(funcWithVar, variable, value);
 
     if (any_of(func.begin(), func.end(), [](char ch){ return std::isalpha((unsigned char)ch); })) {
+        cout << func << endl;
         cerr << "Error: Variable substitution failed, variable or characters still present in function." << endl;
         return NAN;
     }
@@ -232,7 +233,7 @@ double FunctionParser::parse(const string& funcWithoutVar) {
 double FunctionParser::parse(const string& funcWithoutVar, double value){
     // Try to detect variable in the function string
     for(char c : funcWithoutVar){
-        if(isalpha(static_cast<unsigned char>(c))){
+        if(isalpha(static_cast<unsigned char>(c)) && c != 'e'){
             // cout << "Variable detected: " << c << endl;
             return parse(funcWithoutVar, c, value);
         }

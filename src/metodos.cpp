@@ -181,7 +181,7 @@ double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxI
     }
  }
 
- Resultado Metodos::newtonRaphsonModificado(double x0, double epsilon1, double epsilon2, int maxIter) {
+Resultado Metodos::newtonRaphsonModificado(double x0, double epsilon1, double epsilon2, int maxIter) {
     
     if (this->derivate.empty()){
         cerr << "Error: Must have a derivate defined to calculate modified Newton" << endl;
@@ -204,15 +204,27 @@ double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxI
     double x1;
 
     while (true) {
+
+        // evitar explosão numérica
+        if (std::isnan(x0) || std::isinf(x0) || x0 > 1e6 || x0 < -1e6) {
+            cerr << "Divergência numérica detectada." << endl;
+            return {NAN, k, NAN};
+        }
+
         // Usa a derivada fixa d0
         x1 = x0 - F(x0) / d0;
 
+        // evitar explosão ao calcular x1
+        if (std::isnan(x1) || std::isinf(x1)) {
+            cerr << "Divergência: x1 inválido." << endl;
+            return {NAN, k, NAN};
+        }
+
         double erro = abs(x1 - x0);
-        if (abs(F(x1)) < epsilon1 || erro < epsilon2 || k >= maxIter) return {x1, k, erro};
-        
+        if (abs(F(x1)) < epsilon1 || erro < epsilon2 || k >= maxIter)
+            return {x1, k, erro};
+
         x0 = x1;
         k++;
     }
 }
-
- 
