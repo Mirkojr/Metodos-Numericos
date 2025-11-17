@@ -1,0 +1,11 @@
+# pasta de binarios
+/bin/
+
+# pasta do vs code
+.vscode/
+
+.docs/
+
+# executaveis e binarios (so pra garantir)
+*.exe
+*.o
