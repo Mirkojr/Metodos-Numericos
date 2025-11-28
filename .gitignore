@@ -1,10 +1,11 @@
 # pasta de binarios
-/bin/
+bin/
 
 # pasta do vs code
 .vscode/
 
 .docs/
+.obsidian/
 
 # executaveis e binarios (so pra garantir)
 *.exe
