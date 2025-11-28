@@ -58,4 +58,146 @@ O código acompanha um **Makefile** para automatizar a compilação. A maioria d
 
 ### Métodos implementados
 
-[...]
+#### Newton-Raphson
+
+* Algoritmo
+    ```
+    Algoritmo: Newton-Raphson 
+    Entrada: x0, ε1, ε2, iterMax 
+    Saída: raiz 
+    se abs(f(x0)) < ε1 então raiz ← x0; Fim. 
+    k ← 1 
+    repita 
+        x1 ← x0 - f(x0)/f(x0) 
+        escreva k, x1, f(x1) 
+        se abs(f(x1)) < ε1 ou abs(x1-x0) < ε2 ou k ≥ iterMax então 
+        raiz ← x1; Fim. 
+        fim se 
+        x0 ← x1 
+        k ← k+1 
+    fim repita 
+    fim algoritmo
+    ```
+
+* Código
+
+    ```cpp
+    Resultado Metodos::newtonRaphson(double x0, double epsilon1, double epsilon2, int maxIter){
+        
+        if(this->derivate.empty()){
+            cerr << "Erro: É necessário definir uma derivada para calcular Newton-Raphson" << endl;
+            return {NAN, 0, NAN};
+        }
+
+        if(abs(F(x0)) < epsilon1) return {x0, 0, 0.0};
+
+        int k = 0;
+        double x1;
+        while(true){
+            x1 = x0 - F(x0)/D(x0);
+            double erro = abs(x1 - x0);
+            if(abs(F(x1)) < epsilon1 || erro < epsilon2 || k >= maxIter) return {x1, k, erro};
+            x0 = x1;
+            k++;
+        }
+    }
+    ```
+
+#### Newton Modificado
+
+* Código
+    ```cpp
+    Resultado Metodos::newtonRaphsonModificado(double x0, double epsilon1, double epsilon2, int maxIter) {
+        
+        if (this->derivate.empty()){
+            cerr << "Erro: É necessário definir uma derivada para calcular Newton Modificado" << endl;
+
+            return {NAN, 0, NAN};
+        }
+
+        // calcula a derivada apenas uma vez (fixa)
+        double d0 = D(x0);
+        if (d0 == 0){
+            cerr << "Erro: f'(x0) = 0 em Newton Modificado" << endl;
+            return {NAN, 0, NAN};
+        }
+
+        // teste inicial
+        if (abs(F(x0)) < epsilon1){
+            return {x0, 0, 0.0};
+        }
+
+        int k = 1;
+        double x1;
+
+        while (true) {
+
+            // evitar explosão numérica
+            if (std::isnan(x0) || std::isinf(x0) || x0 > 1e6 || x0 < -1e6) {
+                cerr << "Divergência numérica detectada." << endl;
+                return {NAN, k, NAN};
+            }
+
+            // usa a derivada fixa d0
+            x1 = x0 - F(x0) / d0;
+
+            // evitar explosão ao calcular x1
+            if (std::isnan(x1) || std::isinf(x1)) {
+                cerr << "Divergência: x1 inválido." << endl;
+                return {NAN, k, NAN};
+            }
+
+            double erro = abs(x1 - x0);
+            if (abs(F(x1)) < epsilon1 || erro < epsilon2 || k >= maxIter)
+                return {x1, k, erro};
+
+            x0 = x1;
+            k++;
+        }
+    }
+    ```
+
+#### Secante
+
+* Algoritmo
+    ```
+    Algoritmo: Secante 
+    Entrada: x0, x1, ε1, ε2, iterMax 
+    Saída: raiz 
+    se abs(f(x0)) < ε1 então raiz ← x0; Fim. 
+    se abs(f(x1)) < ε1 ou abs(x1-x0) < ε2 então raiz ← x1; Fim. 
+    k ← 1 
+    repita 
+        x2 ← x1 - f(x1)/(f(x1) - f(x0)) * (x1-x0) 
+        escreva k, x2, f(x2) 
+        se abs(f(x2)) < ε1 ou abs(x2-x1) < ε2 ou k ≥ iterMax então 
+        raiz ← x2; Fim. 
+        fim se 
+        x0 ← x1 
+        x1 ← x2 
+        k ← k+1 
+    fim repita 
+    ``` 
+
+* Código
+    ```cpp
+    Resultado Metodos::secante(double x0, double x1, double epsilon1, double epsilon2, int maxIter){
+        if(abs(F(x0)) < epsilon1) return {x0, 0, 0.0};
+        if(abs(F(x1)) < epsilon1 || abs(x1-x0) < epsilon2) return {x1, 0, abs(x1-x0)};
+
+        double x2;
+        int k = 1;
+
+        while(true){
+            x2 = x1 - (F(x1)/(F(x1)-F(x0)) * (x1-x0));
+            double erro = abs(x2 - x1);
+            if(abs(F(x2)) < epsilon1 || erro < epsilon2 || k >= maxIter){
+                return {x2, k, erro};
+            }
+            x0 = x1;
+            x1 = x2;
+            k++;
+        }
+    }
+    ```
+
