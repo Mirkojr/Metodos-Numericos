@@ -1,32 +1,23 @@
-#include <iostream>
-#include <string>
-#include <cmath>
-#include <stack>
-#include <algorithm>
-#include <sstream>
-#include <iomanip>
 #include "functionParser.h"
 
-using namespace std;
-
-// --- Substitui variável e 'e' ---
+// substitui variável e 'e'
 string FunctionParser::variableToValue(string function, char variable, double value){
     string result;
     result.reserve(function.size() + 32);
 
-    // Formata value sem zeros extras e com sinal
-    std::ostringstream oss;
-    oss << std::setprecision(12) << value;
+    // formata value sem zeros extras e com sinal
+    ostringstream oss;
+    oss << setprecision(12) << value;
     string valueStr = oss.str();
     if (value < 0 && valueStr.front() != '(') valueStr = "(" + valueStr + ")";
 
-    // Agora 'e' vira diretamente a constante 
+    // 'e' vira diretamente a constante 
     const string eulerText = "2.718281828459045";
 
     for (size_t i = 0; i < function.size(); ++i){
         char c = function[i];
 
-        // Substitui 'e' isolado
+        // substitui 'e' isolado
         if (c == 'e') {
             bool prevIsLetter = (i > 0 && isalpha((unsigned char)function[i-1]));
             bool nextIsLetter = (i + 1 < function.size() && isalpha((unsigned char)function[i+1]));
@@ -37,7 +28,7 @@ string FunctionParser::variableToValue(string function, char variable, double va
             }
         }
 
-        // Substitui variável
+        // substitui variável
         if (c == variable) {
             bool prevIsLetter = (i > 0 && isalpha((unsigned char)function[i-1]));
             bool nextIsLetter = (i + 1 < function.size() && isalpha((unsigned char)function[i+1]));
@@ -55,13 +46,13 @@ string FunctionParser::variableToValue(string function, char variable, double va
     return result;
 }
 
-// --- Parse seguro com tratamento de número com sinal unário ---
+// parse seguro com tratamento de número com sinal unário
 double FunctionParser::parse(const string& funcWithVar, char variable, double value){
     string func = variableToValue(funcWithVar, variable, value);
 
-    if (any_of(func.begin(), func.end(), [](char ch){ return std::isalpha((unsigned char)ch); })) {
+    if (any_of(func.begin(), func.end(), [](char ch){ return isalpha((unsigned char)ch); })) {
         cout << func << endl;
-        cerr << "Error: Variable substitution failed, variable or characters still present in function." << endl;
+        cerr << "Erro: Falha na substituição da variável, variável ou caracteres ainda presentes na função." << endl;
         return NAN;
     }
 
@@ -75,7 +66,7 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
 
         if (c == ' ') continue;
 
-        // --- Número e unário tipo -2 ou +3 ---
+        // número e unário (tipo -2 ou +3)
         if (isdigit((unsigned char)c) ||
             ((c == '+' || c == '-') && expectUnary && i + 1 < func.length() &&
              (isdigit((unsigned char)func[i+1]) || func[i+1] == '.'))) {
@@ -86,7 +77,7 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
                 ++i;
             }
 
-            // Coleta o número completo
+            // coleta o número completo
             while (i < func.length() && (isdigit((unsigned char)func[i]) || func[i] == '.')) {
                 num_str.push_back(func[i]);
                 ++i;
@@ -96,7 +87,7 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
             try {
                 output.push(stod(num_str));
             } catch (...) {
-                cerr << "Conversion to double failed for token: " << num_str << endl;
+                cerr << "Conversão para double falhou para o token: " << num_str << endl;
                 return NAN;
             }
 
@@ -104,18 +95,18 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
             continue;
         }
 
-        // --- Abre parênteses ---
+        // abre parênteses
         if (c == '(') {
             operands.push(c);
             expectUnary = true;
             continue;
         }
 
-        // --- Fecha parênteses ---
+        // fecha parênteses
         if (c == ')') {
             while (!operands.empty() && operands.top() != '(') {
                 if (output.size() < 2) {
-                    cerr << "Insufficient operands" << endl;
+                    cerr << "Operandos insuficientes" << endl;
                     return NAN;
                 }
                 double b = output.top(); output.pop();
@@ -125,7 +116,7 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
                 output.push(evaluateOp(a, op, b));
             }
             if (operands.empty()) {
-                cerr << "Unbalanced parenthesis" << endl;
+                cerr << "Parênteses desequilibrados" << endl;
                 return NAN;
             }
             operands.pop();
@@ -133,10 +124,10 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
             continue;
         }
 
-        // --- Operadores ---
+        // operadores
         if (c == '+' || c == '-' || c == '*' || c == '/' || c == '^') {
 
-            // ✅ PATCH: unário antes de '('
+            // unário antes de '('
             if (expectUnary && (c == '+' || c == '-')) {
                 if (i + 1 < func.length() && func[i+1] == '(') {
                     output.push(0);
@@ -144,7 +135,7 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
                     expectUnary = true;
                     continue;
                 }
-                cerr << "Syntax error: unexpected operator " << c << endl;
+                cerr << "Erro de sintaxe: operador inesperado " << c << endl;
                 return NAN;
             }
 
@@ -152,7 +143,7 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
                    precedence(operands.top()) >= precedence(c)) {
 
                 if (output.size() < 2) {
-                    cerr << "Insufficient operands" << endl;
+                    cerr << "Operandos insuficientes" << endl;
                     return NAN;
                 }
 
@@ -168,18 +159,18 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
             continue;
         }
 
-        cerr << "Invalid character in expression: '" << c << "'" << endl;
+        cerr << "Caractere inválido na expressão: '" << c << "'" << endl;
         return NAN;
     }
 
     while (!operands.empty()) {
         if (operands.top() == '(') {
-            cerr << "Syntax Error: mismatched parenthesis" << endl;
+            cerr << "Erro de sintaxe: parênteses incompatíveis" << endl;
             return NAN;
         }
 
         if (output.size() < 2) {
-            cerr << "Insufficient operands when finalizing" << endl;
+            cerr << "Operandos insuficientes ao finalizar" << endl;
             return NAN;
         }
 
@@ -191,7 +182,7 @@ double FunctionParser::parse(const string& funcWithVar, char variable, double va
     }
 
     if (output.empty()) {
-        cerr << "No result on output stack" << endl;
+        cerr << "Nenhum resultado na pilha de saída" << endl;
         return NAN;
     }
 
@@ -205,25 +196,24 @@ double FunctionParser::evaluateOp(double a, char op, double b){
         case '*': return a * b;
         case '/':
             if (b == 0){
-                cerr << "Division by zero!" << endl;
+                cerr << "Divisão por zero!" << endl;
                 return NAN;
             }
             return a / b;
         case '^': return pow(a, b);
     }
-    cerr << "Invalid operator '" << op << "'" << endl;
+    cerr << "Operador inválido '" << op << "'" << endl;
     return NAN;
 }
 
+// precedência de operadores
 int FunctionParser::precedence(char op){
     switch(op){
-        case '+':
-        case '-': return 1;
-        case '*':
-        case '/': return 2;
-        case '^': return 3;
+        case '+': case '-': return  1;
+        case '*': case '/': return  2;
+        case '^':           return  3;
+        default:            return -1;
     }
-    return -1;
 }
 
 double FunctionParser::parse(const string& funcWithoutVar) {
@@ -231,14 +221,14 @@ double FunctionParser::parse(const string& funcWithoutVar) {
 }
 
 double FunctionParser::parse(const string& funcWithoutVar, double value){
-    // Try to detect variable in the function string
+    // tenta detectar a variável na string da função
     for(char c : funcWithoutVar){
         if(isalpha(static_cast<unsigned char>(c)) && c != 'e'){
-            // cout << "Variable detected: " << c << endl;
+            // cout << "variavel detectada: " << c << endl;
             return parse(funcWithoutVar, c, value);
         }
     }
-    // No variable detected, parse directly
+    // nenhuma variável, parse direto
     return parse(funcWithoutVar, 'x', value);
 }
 
