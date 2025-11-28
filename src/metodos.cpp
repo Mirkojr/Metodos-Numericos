@@ -1,9 +1,4 @@
-#include <iostream>
-#include <cmath>
 #include "metodos.h"
-
-using namespace std;
-
 
 Metodos::Metodos(const string& func){
     this->func = func;
@@ -18,7 +13,7 @@ void Metodos::setPhi(string phi){
 }
 
 void Metodos::setDerivate(string derivate){
-    this->derivate = derivate; double newtonRaphson(double x0, double epsilon1, double epsilon2, int maxIter);
+    this->derivate = derivate;
 }
 
 void Metodos::printFunc(){
@@ -45,7 +40,7 @@ double Metodos::bissecao( double a, double b, double epslon, int maxIter){
     cout << Fb << endl;
 
     if (Fa * Fb > 0){
-        cout << "Error: This function don't change signals between a and b." << endl;
+        cout << "Erro: A função não troca de sinal entre a e b." << endl;
         return NAN;
     }
 
@@ -85,7 +80,7 @@ double Metodos::falsePosition(double a, double b, double epsilon1, double epsilo
     cout << "Fb: " << Fb << endl;
 
     if (Fa * Fb > 0){
-        cout << "Error: This function don't change signals between a and b." << endl;
+        cout << "Erro: A função não troca de sinal entre a e b." << endl;
         return NAN;
     }
 
@@ -128,9 +123,8 @@ double Metodos::falsePosition(double a, double b, double epsilon1, double epsilo
 
 double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxIter){
 
-    //check if Phi was defined ** required **
-    if (this->phiFunc.empty()) return (cerr << "Error: Must have a phi defined to calculate fixedPoint" << endl, NAN);
-
+    // checa se Phi foi definida ** obrigatorio **
+    if (this->phiFunc.empty()) return (cerr << "Erro: É necessário definir uma phi para calcular ponto fixo" << endl, NAN);
 
     if(abs(F(x0)) < epsilon1) return x0;
 
@@ -146,7 +140,7 @@ double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxI
  Resultado Metodos::newtonRaphson(double x0, double epsilon1, double epsilon2, int maxIter){
     
     if(this->derivate.empty()){
-        cerr << "Error: Must have a derivate defined to calculate newtonRaphson";
+        cerr << "Erro: É necessário definir uma derivada para calcular Newton-Raphson" << endl;
         return {NAN, 0, NAN};
     }
 
@@ -169,6 +163,7 @@ double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxI
 
     double x2;
     int k = 1;
+
     while(true){
         x2 = x1 - (F(x1)/(F(x1)-F(x0)) * (x1-x0));
         double erro = abs(x2 - x1);
@@ -184,18 +179,19 @@ double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxI
 Resultado Metodos::newtonRaphsonModificado(double x0, double epsilon1, double epsilon2, int maxIter) {
     
     if (this->derivate.empty()){
-        cerr << "Error: Must have a derivate defined to calculate modified Newton" << endl;
+        cerr << "Erro: É necessário definir uma derivada para calcular Newton Modificado" << endl;
+
         return {NAN, 0, NAN};
     }
 
-    // Calcula a derivada apenas uma vez (fixa)
+    // calcula a derivada apenas uma vez (fixa)
     double d0 = D(x0);
     if (d0 == 0){
-        cerr << "Error: f'(x0) = 0 in modified Newton" << endl;
+        cerr << "Erro: f'(x0) = 0 em Newton Modificado" << endl;
         return {NAN, 0, NAN};
     }
 
-    // Teste inicial
+    // teste inicial
     if (abs(F(x0)) < epsilon1){
         return {x0, 0, 0.0};
     }
@@ -211,7 +207,7 @@ Resultado Metodos::newtonRaphsonModificado(double x0, double epsilon1, double ep
             return {NAN, k, NAN};
         }
 
-        // Usa a derivada fixa d0
+        // usa a derivada fixa d0
         x1 = x0 - F(x0) / d0;
 
         // evitar explosão ao calcular x1
