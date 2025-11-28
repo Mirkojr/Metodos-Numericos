@@ -16,18 +16,18 @@ O  objetivo  desse  trabalho  é  implementar  os  métodos  numéricos  estudad
 
 ## Enunciado - Tema 2
 
-Um jato supersônico, ao vencer a barreira do som, tem o deslocamento de sua extremidade dada pela equação **f(d) = a*d – d*ln(d)**, onde d é o deslocamento medido em cm e a é um parâmetro de ajuste para que se projete um jato com a máxima segurança e eficiência possível. Caso esse deslocamento passe dos 2 cm esse jato irá explodir,  causando  sérios  danos  e  um  prejuízo  gigantesco.  Vários  testes  e  simulações  são feitos  de  modo  a garantir  que  esse  jato  seja  desenvolvido  com  toda  segurança  possível.  Desenvolva  um  sistema  para  calcular esse deslocamento d da extremidade de um jato supersônico desse tipo considerado com requisitos abaixo: 
+As oscilações causadas por ondas sísmicas são regidas pela função `f(d) = a*e^d – 4*d^2`, onde `a` são amplitudes devidas à oscilação encontrada em  cada onda considerada e `d` é o deslocamento  encontrado  em  cada  onda considerada, variando com o valor de a. Caso esse deslocamento passe de 0,7m essa oscilação amplifica, causando sérios danos e um problema gigantesco. O método de Newton modificado é tal que a função de iteração φ(x) é dada por `φ(x) = x – (f(x) / f ’(xo))`, onde xo é uma aproximação inicial e é tal que `f′(x0​) ≠ 0`. Desenvolva um sistema para calcular o valor do deslocamento d, que deve atender a todos requisitos abaixo: 
 
-a) Implementar algoritmo para calcular d pelo método da Bissecção.    
-b) Implementar algoritmo para calcular d pelo método da Posição Falsa.    
-c) Implementar algoritmo para calcular d pelo método de Newton-Raphson.    
-d) Testar os seus resultados usando como padrão a = 1, isolamento = (2, 3) e e = 10-5.    
-e) Fornecer um quadro resposta, variando os valores de a para vários jatos.    
-f) Fornecer um quadro comparativo, com isolamento, raízes e dados para cada método.    
-g) Analisar o efeito da variação do valor de a de cada jato, para cada método dado.    
+a) Implementar algoritmo para calcular d pelo método da Newton-Raphson.   
+b) Implementar algoritmo para calcular d pelo método de Newton modificado.   
+c) Implementar algoritmo para calcular d pelo método da Secante tradicional.   
+d) Testar os resultados para d usando como padrão a = 1, d0 = 0,5 e e = 10-4.   
+e) Fornecer um quadro resposta, com d calculado para cada método dado.   
+f) Fornecer um quadro comparativo, com todos os dados para cada método.   
+g) Analisar o efeito da variação do valor de a para cada método considerado.   
 
-**Dados de entrada:** n (número de jatos), a (de cada jato) e e (precisão).    
-**Dados de saída:** quadros resposta (com d e erro para cada jato e método) e comparativo.  
+**Dados de entrada:** n (número de valores de a), a (para cada n) e e (precisão).   
+**Dados de saída:** quadros resposta (com d e erro para cada a e método) e comparativo.  
 
 ## Como compilar e rodar
 
