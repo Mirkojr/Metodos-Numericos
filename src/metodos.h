@@ -33,8 +33,8 @@ class Metodos{
 
         // metodos basicos
         double bissecao( double a, double b, double epsilon, int maxIter);
-        double falsePosition(double a, double b, double epsilon1, double epsilon2, int maxIter);
-        double fixedPoint(double x0, double epsilon1, double epsilon2, int maxIter);
+        double posicaoFalsa(double a, double b, double epsilon1, double epsilon2, int maxIter);
+        double pontoFixo(double x0, double epsilon1, double epsilon2, int maxIter);
 
         // metodos avancados
         Resultado newtonRaphson(double x0, double epsilon1, double epsilon2, int maxIter);

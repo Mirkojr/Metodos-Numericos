@@ -70,7 +70,7 @@ double Metodos::choose(double a, double b) {
     return (abs(F(a)) < abs(F(b))) ? a : b;
 }
 
-double Metodos::falsePosition(double a, double b, double epsilon1, double epsilon2, int maxIter){
+double Metodos::posicaoFalsa(double a, double b, double epsilon1, double epsilon2, int maxIter){
     double root;
 
     double Fa = F(a);
@@ -121,7 +121,7 @@ double Metodos::falsePosition(double a, double b, double epsilon1, double epsilo
     return root;
 }
 
-double Metodos::fixedPoint(double x0, double epsilon1, double epsilon2, int maxIter){
+double Metodos::pontoFixo(double x0, double epsilon1, double epsilon2, int maxIter){
 
     // checa se Phi foi definida ** obrigatorio **
     if (this->phiFunc.empty()) return (cerr << "Erro: É necessário definir uma phi para calcular ponto fixo" << endl, NAN);
@@ -202,7 +202,7 @@ Resultado Metodos::newtonRaphsonModificado(double x0, double epsilon1, double ep
     while (true) {
 
         // evitar explosão numérica
-        if (std::isnan(x0) || std::isinf(x0) || x0 > 1e6 || x0 < -1e6) {
+        if (isnan(x0) || isinf(x0) || x0 > 1e6 || x0 < -1e6) {
             cerr << "Divergência numérica detectada." << endl;
             return {NAN, k, NAN};
         }
@@ -211,7 +211,7 @@ Resultado Metodos::newtonRaphsonModificado(double x0, double epsilon1, double ep
         x1 = x0 - F(x0) / d0;
 
         // evitar explosão ao calcular x1
-        if (std::isnan(x1) || std::isinf(x1)) {
+        if (isnan(x1) || isinf(x1)) {
             cerr << "Divergência: x1 inválido." << endl;
             return {NAN, k, NAN};
         }
