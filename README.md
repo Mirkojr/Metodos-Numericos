@@ -127,131 +127,127 @@ O código acompanha um **Makefile** para automatizar a compilação. A maioria d
 #### Posição Falsa
 
 * Algoritmo
-
-```
-Algoritmo: Posição Falsa 
-Entrada: a, b, ε1, ε2, iterMax 
-Saída: raiz 
-  Fa ← f(a); Fb ← f(b) 
-  se Fa * Fb > 0 então  
-    escreva "Erro: função não muda de sinal entre a e b"
-    sair() 
-  fimse 
-  intervX ← abs(b-a); 
-  se intervX < ε1 então raiz ← escolha(a,b); Fim. 
-  se abs(Fa) < ε2 então raiz ← a; Fim. 
-  se abs(Fb) < ε2 então raiz ← b; Fim. 
-  k ← 0
-  repita 
-     x ← (aFb - bFa)/(Fb-Fa); Fx ← f(x) 
-     escreva k, a, Fa, b, Fb, x, Fx, intervX 
-     se abs(f(x)) < ε2 ou k ≥ iterMax então raiz ← x; Fim. 
-     se Fa * Fx > 0 então a ← x; Fa ← Fx 
-     senão b ← x; Fb ← Fx  
-     intervX ← abs(b-a)  
-     se intervX ≤ ε1 então 
-         raiz ← escolha(a,b); Fim. 
-     fim se 
-     k ← k+1 
-  fim repita 
-fim algoritmo
-```
+    ```
+    Algoritmo: Posição Falsa 
+    Entrada: a, b, ε1, ε2, iterMax 
+    Saída: raiz 
+    Fa ← f(a); Fb ← f(b) 
+    se Fa * Fb > 0 então  
+        escreva "Erro: função não muda de sinal entre a e b"
+        sair() 
+    fimse 
+    intervX ← abs(b-a); 
+    se intervX < ε1 então raiz ← escolha(a,b); Fim. 
+    se abs(Fa) < ε2 então raiz ← a; Fim. 
+    se abs(Fb) < ε2 então raiz ← b; Fim. 
+    k ← 0
+    repita 
+        x ← (aFb - bFa)/(Fb-Fa); Fx ← f(x) 
+        escreva k, a, Fa, b, Fb, x, Fx, intervX 
+        se abs(f(x)) < ε2 ou k ≥ iterMax então raiz ← x; Fim. 
+        se Fa * Fx > 0 então a ← x; Fa ← Fx 
+        senão b ← x; Fb ← Fx  
+        intervX ← abs(b-a)  
+        se intervX ≤ ε1 então 
+            raiz ← escolha(a,b); Fim. 
+        fim se 
+        k ← k+1 
+    fim repita 
+    fim algoritmo
+    ```
 
 * Código
+    ```cpp
+    double Metodos::posicaoFalsa(double a, double b, double epsilon1, double epsilon2, int maxIter){
+        double root;
 
-```cpp
-double Metodos::posicaoFalsa(double a, double b, double epsilon1, double epsilon2, int maxIter){
-    double root;
+        double Fa = F(a);
+        double Fb = F(b);
 
-    double Fa = F(a);
-    double Fb = F(b);
+        cout << "Fa: " << Fa << endl;
+        cout << "Fb: " << Fb << endl;
 
-    cout << "Fa: " << Fa << endl;
-    cout << "Fb: " << Fb << endl;
+        if (Fa * Fb > 0){
+            cout << "Erro: A função não troca de sinal entre a e b." << endl;
+            return NAN;
+        }
 
-    if (Fa * Fb > 0){
-        cout << "Erro: A função não troca de sinal entre a e b." << endl;
-        return NAN;
+        double intervX = abs(b-a);
+        if(intervX < epsilon1) return choose(a,b);
+        if(abs(F(a)) < epsilon2) return a;
+        if(abs(F(b)) < epsilon2) return b;
+        
+        int k = 0;
+        double x; double Fx;
+        while(true){
+            x = (a*F(b) - b*(F(a)))/(F(b)-F(a));
+            Fx = F(x);
+
+            if((abs(Fx) < epsilon2) || (k>=maxIter)){
+                root = x;
+                break;
+            }
+            if(Fa*Fx > 0){
+                a = x;
+                Fa = Fx;
+            }
+            else{
+                b = x;
+                Fb = Fx;
+            }
+
+            intervX = abs(b-a);
+
+            if(intervX <= epsilon1){
+                root = choose(a,b);
+                break;
+            }
+
+            k++;
+        }
+        
+        return root;
     }
-
-    double intervX = abs(b-a);
-    if(intervX < epsilon1) return choose(a,b);
-    if(abs(F(a)) < epsilon2) return a;
-    if(abs(F(b)) < epsilon2) return b;
-    
-    int k = 0;
-    double x; double Fx;
-    while(true){
-        x = (a*F(b) - b*(F(a)))/(F(b)-F(a));
-        Fx = F(x);
-
-        if((abs(Fx) < epsilon2) || (k>=maxIter)){
-            root = x;
-            break;
-        }
-        if(Fa*Fx > 0){
-            a = x;
-            Fa = Fx;
-        }
-        else{
-            b = x;
-            Fb = Fx;
-        }
-
-        intervX = abs(b-a);
-
-        if(intervX <= epsilon1){
-            root = choose(a,b);
-            break;
-        }
-
-        k++;
-    }
-    
-    return root;
-}
-```
+    ```
 
 #### Ponto Fixo
 
 * Algoritmo
-
-```
-Algoritmo: MPF 
-Entrada: x0, ε1, ε2, iterMax 
-Saída: raiz 
-  se abs(f(x0)) < ε1 então raiz ← x0; Fim. 
-  k ← 1 
-  repita 
-     x1 ← φ(x0) 
-     escreva k, x1, x0, x1-x0, f(x1) 
-     se abs(f(x1)) < ε1 ou abs(x1-x0) < ε2 ou k ≥ iterMax então 
-       raiz ← x1; Fim. 
-     fim se 
-     x0 ← x1 
-     k ← k+1 
-  fim repita 
-fim algoritmo
-```
+    ```
+    Algoritmo: MPF 
+    Entrada: x0, ε1, ε2, iterMax 
+    Saída: raiz 
+    se abs(f(x0)) < ε1 então raiz ← x0; Fim. 
+    k ← 1 
+    repita 
+        x1 ← φ(x0) 
+        escreva k, x1, x0, x1-x0, f(x1) 
+        se abs(f(x1)) < ε1 ou abs(x1-x0) < ε2 ou k ≥ iterMax então 
+        raiz ← x1; Fim. 
+        fim se 
+        x0 ← x1 
+        k ← k+1 
+    fim repita 
+    fim algoritmo
+    ```
 
 * Código
+    ```cpp
+    double Metodos::pontoFixo(double x0, double epsilon1, double epsilon2, int maxIter){
 
-```cpp
-double Metodos::pontoFixo(double x0, double epsilon1, double epsilon2, int maxIter){
+        if (this->phiFunc.empty()) return (cerr << "Erro: É necessário definir uma phi para calcular ponto fixo" << endl, NAN);
 
-    if (this->phiFunc.empty()) return (cerr << "Erro: É necessário definir uma phi para calcular ponto fixo" << endl, NAN);
+        if(abs(F(x0)) < epsilon1) return x0;
 
-    if(abs(F(x0)) < epsilon1) return x0;
-
-    int k = 1;
-    while(true){
-        double x1 = Phi(x0);
-        if(abs(F(x1)) < epsilon1 || abs(x1-x0) < epsilon2 || k >= maxIter) return x1;
-        x0 = x1;
-        k++;
+        int k = 1;
+        while(true){
+            double x1 = Phi(x0);
+            if(abs(F(x1)) < epsilon1 || abs(x1-x0) < epsilon2 || k >= maxIter) return x1;
+            x0 = x1;
+            k++;
+        }
     }
-}
-```
+    ```
 
 #### Newton-Raphson
 
