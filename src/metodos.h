@@ -2,11 +2,22 @@
 #define METODOS_H
 
 #include "functionParser.h"
+#include <vector>
 
+// estrutura para armazenar resultados
 struct Resultado{
     double raiz;
     int iteracoes;
     double erro;
+    string parada;
+};
+
+// estrutura para armazenar linhas da tabela resumo
+struct LinhaSimples {
+    double a;
+    Resultado newton;
+    Resultado newtonMod;
+    Resultado secante;
 };
 
 class Metodos{
@@ -30,13 +41,17 @@ class Metodos{
         void setPhi(string phi);
         void setFunc(string func);
         void setDerivate(string derivate);
+        
+        void quadroResumido(vector<LinhaSimples> tabela);
+        void quadroResumidoBonito(vector<LinhaSimples> tabela);
+        void quadroResumidoWindows(vector<LinhaSimples> tabela);
 
         // metodos basicos
         double bissecao( double a, double b, double epsilon, int maxIter);
         double posicaoFalsa(double a, double b, double epsilon1, double epsilon2, int maxIter);
         double pontoFixo(double x0, double epsilon1, double epsilon2, int maxIter);
 
-        // metodos avancados
+        // metodos do trabalho
         Resultado newtonRaphson(double x0, double epsilon1, double epsilon2, int maxIter);
         Resultado secante(double x0, double x1, double epsilon1, double epsilon2, int maxIter);
         Resultado newtonRaphsonModificado(double x0, double epsilon1, double epsilon2, int maxIter);

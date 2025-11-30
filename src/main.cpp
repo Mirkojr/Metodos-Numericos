@@ -1,15 +1,14 @@
 #include "functionParser.h"
 #include "metodos.h"
-#include <vector>
 
-// --- Estrutura para armazenar resultados ---
+/*/ --- Estrutura para armazenar resultados ---
 struct LinhaSimples {
     double a;
     // Resultado é o tipo que vem da classe Metodos (newtonRaphson, etc.)
     Resultado newton;
     Resultado newtonMod;
     Resultado secante;
-};
+}; */
 
 int main() {
 
@@ -57,7 +56,7 @@ int main() {
         metodo.setFunc(func);
         metodo.setDerivate(funcDerivate);
 
-        cout << "== Analise para a = " << a << " ==\n";
+        cout << fixed << setprecision(2) << "== Analise para a = " << a << " ==\n";
 
         // Chama os métodos e armazena os resultados
         Resultado resNewton = metodo.newtonRaphson(d0, epsilon, epsilon, maxIter);
@@ -67,6 +66,7 @@ int main() {
         // Armazena para a tabela final
         tabela.push_back({a, resNewton, resNewtonMod, resSecante});
 
+        /*
         // 3. SAÍDA DE RESULTADOS IMEDIATA (Mais simples)
         cout << "  - Newton-Raphson:\tRaiz = " << setprecision(6) << resNewton.raiz
              << "\tIter = " << resNewton.iteracoes << "\tErro = " << resNewton.erro << '\n';
@@ -78,41 +78,14 @@ int main() {
              << "\tIter = " << resSecante.iteracoes << "\tErro = " << resSecante.erro << '\n';
 
         cout << "\n";
+        */
     }
 
-    /*
-    // 4. QUADRO RESUMO (novo)
-    cout << "╭───────────────────────────────────────────────────────────────────────────────────────╮\n";
-    cout << "│                              Quadro Comparativo Resumido                              │\n";
-    cout << "├───────┬───────────────────────┬───────────────────────────────┬───────────────────────┤\n";
-    cout << "│ a     │ Newton (Raiz, Iter)   │ Newton Mod (Raiz, Iter)       │ Secante (Raiz, Iter)  │\n";
-    cout << "├───────┼───────────────────────┼───────────────────────────────┼───────────────────────┤\n";
-    
-    for (auto& L : tabela) {
-        cout << fixed << setprecision(2) << "│ " << L.a << "\t│ ";
-        
-        cout << scientific << setprecision(6) << L.newton.raiz    << ", " << L.newton.iteracoes    << "\t│ ";
-        cout << scientific << setprecision(6) << L.newtonMod.raiz << ", " << L.newtonMod.iteracoes << "\t\t│ ";
-        cout << scientific << setprecision(6) << L.secante.raiz   << ", " << L.secante.iteracoes   << "\t│ " << '\n';
-    }
-    cout << "╰───────┴───────────────────────┴───────────────────────────────┴───────────────────────╯\n";
-    */
+    // 4. QUADRO RESUMO
 
-    // 4. QUADRO RESUMO 
-    cout << "\n=== Quadro Comparativo Resumido ===\n";
-    cout << "a\t| Newton (Raiz, Iter)\t| Newton Mod (Raiz, Iter)\t| Secante (Raiz, Iter)\n";
-    cout << "-----------------------------------------------------------------------------------\n";
-
-    for (auto& L : tabela) {
-        cout << fixed << setprecision(2) << L.a << "\t| ";
-
-        cout << scientific << setprecision(6) << L.newton.raiz << ", " << L.newton.iteracoes << "\t| ";
-        cout << scientific << setprecision(6) << L.newtonMod.raiz << ", " << L.newtonMod.iteracoes << "\t\t| ";
-        cout << scientific << setprecision(6) << L.secante.raiz << ", " << L.secante.iteracoes << '\n';
-    }
-    cout << "-----------------------------------------------------------------------------------\n";
-
-    cout << "\n==== Fim do Calculo ====\n";
+    // metodo.quadroResumido(tabela);
+    // metodo.quadroResumidoWindows(tabela);
+    metodo.quadroResumidoBonito(tabela);
 
     return 0;
 }
