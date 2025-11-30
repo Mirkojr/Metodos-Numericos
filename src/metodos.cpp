@@ -146,7 +146,7 @@ double Metodos::pontoFixo(double x0, double epsilon1, double epsilon2, int maxIt
 
     if(abs(F(x0)) < epsilon1) return {x0, 0, 0.0};
 
-    int k = 0;
+    int k = 1;
     double x1;
     while(true){
         x1 = x0 - F(x0)/D(x0);
