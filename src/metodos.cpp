@@ -149,19 +149,28 @@ double Metodos::pontoFixo(double x0, double epsilon1, double epsilon2, int maxIt
     int k = 1;
     double x1;
 
-    // iteracoes
-    cout << endl << "NEWTON-RAPHSON" << endl;
-    cout << "k | x                   | f(x)          | erro" << endl;
+    // tabela de iteracoes
+    cout << "╭───────────────────────────────────────────────────────╮" << endl;
+    cout << "│                     NEWTON-RAPHSON                    │" << endl;
+    cout << "├────┬───────────────────┬───────────────┬──────────────┤" << endl;
+    cout << "│ k  │ x                 │ f(x)          │ erro         │" << endl;
+    cout << "├────┼───────────────────┼───────────────┼──────────────┤\n";
+
 
     while(true){
         x1 = x0 - F(x0)/D(x0);
         double erro = abs(x1 - x0);
 
-        // iteracoes
-        cout << fixed << setprecision(3) << k << " | ";
-        cout << scientific << setprecision(6) << x1 << "\t| " << F(x1) << "\t| " << erro << endl;
+        // tabela de iteracoes
+        cout << "│ "
+         << setw(2) << right << k << " │ "
+         << setw(17) << left  << scientific << setprecision(6) << x1 << " │ "
+         << setw(13) << left  << scientific << setprecision(6) << F(x1) << " │ "
+         << setw(12) << left  << scientific << setprecision(6) << erro << " │"
+         << endl;
 
-        // if(abs(F(x1)) < epsilon1 || erro < epsilon2 || k >= maxIter) return {x1, k, erro};
+        // printar a linha final da tabela
+        if(abs(F(x1)) < epsilon1 || erro < epsilon2 || k >= maxIter) cout << "╰────┴───────────────────┴───────────────┴──────────────╯" << endl;
 
         if (abs(F(x1)) < epsilon1) return {x1, k, erro, "|f(x)| < epsilon"};
         if (erro < epsilon2)       return {x1, k, erro, "erro < epsilon"};
@@ -179,19 +188,27 @@ double Metodos::pontoFixo(double x0, double epsilon1, double epsilon2, int maxIt
     double x2;
     int k = 1;
 
-    // iteracoes
-    cout << endl << "SECANTE" << endl;
-    cout << "k | x                   | f(x)          | erro" << endl;
+    // tabela de iteracoes
+    cout << "╭───────────────────────────────────────────────────────╮" << endl;
+    cout << "│                        SECANTE                        │" << endl;
+    cout << "├────┬───────────────────┬───────────────┬──────────────┤" << endl;
+    cout << "│ k  │ x                 │ f(x)          │ erro         │" << endl;
+    cout << "├────┼───────────────────┼───────────────┼──────────────┤\n";
 
     while(true){
         x2 = x1 - (F(x1)/(F(x1)-F(x0)) * (x1-x0));
         double erro = abs(x2 - x1);
 
-        // iteracoes
-        cout << fixed << setprecision(3) << k << " | ";
-        cout << scientific << setprecision(6) << x2 << "\t| " << F(x2) << "\t| " << erro << endl;
+        // tabela de iteracoes
+        cout << "│ "
+         << setw(2) << right << k << " │ "
+         << setw(17) << left  << scientific << setprecision(6) << x1 << " │ "
+         << setw(13) << left  << scientific << setprecision(6) << F(x1) << " │ "
+         << setw(12) << left  << scientific << setprecision(6) << erro << " │"
+         << endl;
 
-        // if(abs(F(x2)) < epsilon1 || erro < epsilon2 || k >= maxIter) return {x2, k, erro};
+        // printar a linha final da tabela
+        if(abs(F(x2)) < epsilon1 || erro < epsilon2 || k >= maxIter) cout << "╰────┴───────────────────┴───────────────┴──────────────╯" << endl;
 
         if (abs(F(x2)) < epsilon1) return {x2, k, erro, "|f(x)| < epsilon"};
         if (erro < epsilon2)       return {x2, k, erro, "erro < epsilon"};
@@ -226,9 +243,12 @@ Resultado Metodos::newtonRaphsonModificado(double x0, double epsilon1, double ep
     int k = 1;
     double x1;
 
-    // iteracoes
-    cout << endl << "NEWTON MODIFICADO" << endl;
-    cout << "k | x                   | f(x)          | erro" << endl;
+    // tabela de iteracoes
+    cout << "╭───────────────────────────────────────────────────────╮" << endl;
+    cout << "│                   NEWTON-MODIFICADO                   │" << endl;
+    cout << "├────┬───────────────────┬───────────────┬──────────────┤" << endl;
+    cout << "│ k  │ x                 │ f(x)          │ erro         │" << endl;
+    cout << "├────┼───────────────────┼───────────────┼──────────────┤" << endl;
 
     while (true) {
 
@@ -249,11 +269,16 @@ Resultado Metodos::newtonRaphsonModificado(double x0, double epsilon1, double ep
 
         double erro = abs(x1 - x0);
 
-        // iteracoes
-        cout << fixed << setprecision(3) << k << " | ";
-        cout << scientific << setprecision(6) << x1 << "\t| " << F(x1) << "\t| " << erro << endl;
+        // tabela de iteracoes
+        cout << "│ "
+         << setw(2) << right << k << " │ "
+         << setw(17) << left  << scientific << setprecision(6) << x1 << " │ "
+         << setw(13) << left  << scientific << setprecision(6) << F(x1) << " │ "
+         << setw(12) << left  << scientific << setprecision(6) << erro << " │"
+         << endl;
 
-        // if (abs(F(x1)) < epsilon1 || erro < epsilon2 || k >= maxIter) return {x1, k, erro};
+        // printar a linha final da tabela
+        if (abs(F(x1)) < epsilon1 || erro < epsilon2 || k >= maxIter) cout << "╰────┴───────────────────┴───────────────┴──────────────╯" << endl;
 
         if (abs(F(x1)) < epsilon1) return {x1, k, erro, "|f(x)| < epsilon"};
         if (erro < epsilon2)       return {x1, k, erro, "erro < epsilon"};
@@ -264,30 +289,13 @@ Resultado Metodos::newtonRaphsonModificado(double x0, double epsilon1, double ep
     }
 }
 
-// FUNCOES PARA IMPRIMIR O QUADRO RESUMO
-// quadro do marcos modificado
-void Metodos::quadroResumido(vector<LinhaSimples> tabela) {
-    cout << "\n=== Quadro Comparativo Resumido ===\n";
-    cout << "a       | Newton (Raiz, Iter, Parada)           | Newton Mod (Raiz, Iter, Parada)       | Secante (Raiz, Iter, Parada)\n";
-    cout << "-----------------------------------------------------------------------------------------------------------------------------\n";
-
-    for (auto& L : tabela) {
-        cout << fixed << setprecision(2) << L.a << "\t| ";
-
-        cout << scientific << setprecision(6) << L.newton.raiz    << ", " << L.newton.iteracoes    << ", " << L.newton.parada << "\t| ";
-        cout << scientific << setprecision(6) << L.newtonMod.raiz << ", " << L.newtonMod.iteracoes << ", " << L.newtonMod.parada << "\t| ";
-        cout << scientific << setprecision(6) << L.secante.raiz   << ", " << L.secante.iteracoes   << ", " << L.secante.parada << '\n';
-    }
-    cout << "-----------------------------------------------------------------------------------------------------------------------------\n";
-    cout << "\n==== Fim do Calculo ====\n";
-}
-
+// QUADRO RESUMO
 // quadro estilo tabela (q so funciona no linux)
-void Metodos::quadroResumidoBonito(vector<LinhaSimples> tabela) {
+void Metodos::quadroResumo(vector<LinhaSimples> tabela) {
     cout << "╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮\n";
     cout << "│                                                   Quadro Comparativo Resumido                                                  │\n";
     cout << "├───────┬───────────────────────────────────────┬───────────────────────────────────────┬────────────────────────────────────────┤\n";
-    cout << "│ a     │ Newton (Raiz, Iter)                   │ Newton Mod (Raiz, Iter)               │ Secante (Raiz, Iter)                   │\n";
+    cout << "│ a     │ Newton (Raiz, Iter, Parada)           │ Newton Mod (Raiz, Iter, Parada)       │ Secante (Raiz, Iter, Parada)           │\n";
     cout << "├───────┼───────────────────────────────────────┼───────────────────────────────────────┼────────────────────────────────────────┤\n";
     for (auto& L : tabela) {
         cout << fixed << setprecision(2) << "│ " << L.a << "\t│ ";
@@ -297,21 +305,4 @@ void Metodos::quadroResumidoBonito(vector<LinhaSimples> tabela) {
         cout << scientific << setprecision(6) << L.secante.raiz   << ", " << L.secante.iteracoes   << ", " << L.secante.parada << "\t │\n";
     }
     cout << "╰───────┴───────────────────────────────────────┴───────────────────────────────────────┴────────────────────────────────────────╯\n";
-}
-
-// quadro estilo tabela mais simples (funciona no windows)
-void Metodos::quadroResumidoWindows(vector<LinhaSimples> tabela) {
-    cout << "+--------------------------------------------------------------------------------------------------------------------------------+\n";
-    cout << "|                                                   Quadro Comparativo Resumido                                                  |\n";
-    cout << "|--------------------------------------------------------------------------------------------------------------------------------|\n";
-    cout << "| a     | Newton (Raiz, Iter)                   | Newton Mod (Raiz, Iter)               | Secante (Raiz, Iter)                   |\n";
-    cout << "|-------+---------------------------------------+---------------------------------------+----------------------------------------|\n";
-    for (auto& L : tabela) {
-        cout << fixed << setprecision(2) << "| " << L.a << "\t| ";
-        
-        cout << scientific << setprecision(6) << L.newton.raiz    << ", " << L.newton.iteracoes    << ", " << L.newton.parada << "\t| ";
-        cout << scientific << setprecision(6) << L.newtonMod.raiz << ", " << L.newtonMod.iteracoes << ", " << L.newtonMod.parada << "\t| ";
-        cout << scientific << setprecision(6) << L.secante.raiz   << ", " << L.secante.iteracoes   << ", " << L.secante.parada << "\t |\n";
-    }
-    cout << "+--------------------------------------------------------------------------------------------------------------------------------+\n";
 }

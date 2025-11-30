@@ -42,9 +42,7 @@ class Metodos{
         void setFunc(string func);
         void setDerivate(string derivate);
         
-        void quadroResumido(vector<LinhaSimples> tabela);
-        void quadroResumidoBonito(vector<LinhaSimples> tabela);
-        void quadroResumidoWindows(vector<LinhaSimples> tabela);
+        void quadroResumo(vector<LinhaSimples> tabela);
 
         // metodos basicos
         double bissecao( double a, double b, double epsilon, int maxIter);

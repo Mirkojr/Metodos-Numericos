@@ -1,15 +1,6 @@
 #include "functionParser.h"
 #include "metodos.h"
 
-/*/ --- Estrutura para armazenar resultados ---
-struct LinhaSimples {
-    double a;
-    // Resultado é o tipo que vem da classe Metodos (newtonRaphson, etc.)
-    Resultado newton;
-    Resultado newtonMod;
-    Resultado secante;
-}; */
-
 int main() {
 
     cout << "==== Sistema de Calculo de Deslocamento Simples ====\n\n";
@@ -65,27 +56,10 @@ int main() {
 
         // Armazena para a tabela final
         tabela.push_back({a, resNewton, resNewtonMod, resSecante});
-
-        /*
-        // 3. SAÍDA DE RESULTADOS IMEDIATA (Mais simples)
-        cout << "  - Newton-Raphson:\tRaiz = " << setprecision(6) << resNewton.raiz
-             << "\tIter = " << resNewton.iteracoes << "\tErro = " << resNewton.erro << '\n';
-
-        cout << "  - Newton Modificado:\tRaiz = " << setprecision(6) << resNewtonMod.raiz
-             << "\tIter = " << resNewtonMod.iteracoes << "\tErro = " << resNewtonMod.erro << '\n';
-
-        cout << "  - Secante:\t\tRaiz = " << setprecision(6) << resSecante.raiz
-             << "\tIter = " << resSecante.iteracoes << "\tErro = " << resSecante.erro << '\n';
-
-        cout << "\n";
-        */
     }
-
-    // 4. QUADRO RESUMO
-
-    // metodo.quadroResumido(tabela);
-    // metodo.quadroResumidoWindows(tabela);
-    metodo.quadroResumidoBonito(tabela);
+    
+    // 3. QUADRO RESUMO
+    metodo.quadroResumo(tabela);
 
     return 0;
 }
