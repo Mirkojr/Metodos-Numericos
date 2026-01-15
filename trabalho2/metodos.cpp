@@ -31,6 +31,27 @@ vector<vector<double>> calcula_inversa(int n, vector<vector<double>> A) {
     return I;
 }
 
+double calcula_norma(int n, vector<double> &x, vector<double> &v) {
+    double normaNum = 0.0;
+    double normaDen = 0.0;
+
+    for (int i = 0; i < n; ++i) {
+        double t = abs(v[i] - x[i]);
+        if (t > normaNum) {
+            normaNum = t;
+        }
+        if (abs(v[i]) > normaDen) {
+            normaDen = abs(v[i]);
+        }
+
+        // Atualiza o vetor x com o vetor v
+        x[i] = v[i];
+    }
+
+    double norma = normaNum / normaDen;
+    return norma;
+}
+
 void printa_matriz(int n, vector<vector<double>> M) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
