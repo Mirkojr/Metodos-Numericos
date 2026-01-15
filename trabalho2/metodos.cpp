@@ -52,15 +52,6 @@ double calcula_norma(int n, vector<double> &x, vector<double> &v) {
     return norma;
 }
 
-void printa_matriz(int n, vector<vector<double>> M) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-        cout << M[i][j] << " ";
-        }
-        cout << endl;
-    }
-}
-
 vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, double epsilon, int iterMax) {
     vector<double> x(n);
     vector<double> v(n);
@@ -77,6 +68,8 @@ vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, d
         b[i] = b[i] * r; // b[i] <- b[i] * r
         x[i] = b[i];     // x[i] <- b[i]
     }
+
+    cout << fixed << setprecision(6);
 
     // {iterações de Jacobi}
     while (true) {
@@ -95,7 +88,10 @@ vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, d
         double norma = calcula_norma(n, x, v); // norma <- calcula_norma(n,x,v)
         
         // Saída de controle
-        cout << "Iteracao k=" << k << " | Norma=" << norma << endl;
+        // cout << "Iteracao k=" << k << " | Norma=" << norma << endl;
+        cout << "Iteracao k=" << k << " | Norma: " << norma << " | x: ";
+        for (double val : x) cout << val << " ";
+        cout << endl;
 
         // se norma <= epsilon ou k >= iterMax então interrompa
         if (norma <= epsilon || k >= iterMax) {
@@ -104,4 +100,67 @@ vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, d
     }
 
     return x; // Retorna o vetor solução x
+}
+
+// Algoritmo principal: Gauss_Seidel (conforme Fonte [2])
+vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, double e, int iterMax) {
+    vector<double> x(n);
+    vector<double> v(n);
+
+    // 1. Construção da matriz e do vetor de iterações inicial [2]
+    for (int i = 0; i < n; i++) {
+        double r = 1.0 / A[i][i];
+        for (int j = 0; j < n; j++) {
+            if (i != j) {
+                A[i][j] = A[i][j] * r;
+            }
+        }
+        b[i] = b[i] * r;
+        x[i] = b[i]; // Aproximação inicial xi = bi/aii [2, 4]
+    }
+
+    int k = 0;
+    double norma;
+
+    cout << fixed << setprecision(6);
+
+    // 2. Iterações de Gauss-Seidel [2]
+    do {
+        k = k + 1;
+        for (int i = 0; i < n; i++) {
+            double soma = 0;
+            for (int j = 0; j < n; j++) {
+                if (i != j) {
+                    // Diferente de Jacobi, Seidel usa os valores de x já atualizados [1]
+                    soma = soma + A[i][j] * x[j];
+                }
+            }
+            v[i] = x[i];          // Guarda o valor anterior para o cálculo da norma [2]
+            x[i] = b[i] - soma;   // Atualiza x[i] imediatamente [2]
+        }
+
+        // 3. Cálculo da norma de erro relativo [2, 3]
+        norma = calcula_norma(n, v, x);
+
+        cout << "Iteracao k=" << k << " | Norma: " << norma << " | x: ";
+        for (double val : x) cout << val << " ";
+        cout << endl;
+
+        // 4. Critério de parada: precisão alcançada ou limite de iterações [2, 5]
+        if (norma <= e || k >= iterMax) {
+            break;
+        }
+
+    } while (true);
+
+    return x;
+}
+
+void printa_matriz(int n, vector<vector<double>> M) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+        cout << M[i][j] << " ";
+        }
+        cout << endl;
+    }
 }

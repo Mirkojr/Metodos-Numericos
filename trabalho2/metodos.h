@@ -8,5 +8,8 @@ using namespace std;
 vector<vector<double>> calcula_inversa(int n, vector<vector<double>> A);
 double calcula_norma(int n, vector<double> &x, vector<double> &v);
 
-void printa_matriz(int n, vector<vector<double>> M);
 vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, double epsilon, int iterMax);
+vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, double e, int iterMax);
+
+void printa_matriz(int n, vector<vector<double>> M);
+
