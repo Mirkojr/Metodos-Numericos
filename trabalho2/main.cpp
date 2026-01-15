@@ -13,5 +13,11 @@ int main() {
     printa_matriz(n, A);                        // Chamada de exemplo para a função printa_matriz
     printa_matriz(n, calcula_inversa(n, A));    // Chamada de exemplo para a função printa_matriz
 
+    vector<double> resultado = Gauss_Jacobi(n, A, b, 0.0001, 100);
+    cout << "Resultado da Gauss-Jacobi:" << endl;
+    for (double val : resultado) {
+        cout << val << " ";
+    }
+    cout << endl;
     return 0;
 }

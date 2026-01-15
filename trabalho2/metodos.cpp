@@ -60,3 +60,48 @@ void printa_matriz(int n, vector<vector<double>> M) {
         cout << endl;
     }
 }
+
+vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, double epsilon, int iterMax) {
+    vector<double> x(n);
+    vector<double> v(n);
+    int k = 0;
+
+    // {construção da matriz e do vetor de iterações}
+    for (int i = 0; i < n; i++) {
+        double r = 1.0 / A[i][i]; // r <- 1/A[i][i]
+        for (int j = 0; j < n; j++) {
+            if (i != j) {
+                A[i][j] = A[i][j] * r; // A[i][j] <- A[i][j] * r
+            }
+        }
+        b[i] = b[i] * r; // b[i] <- b[i] * r
+        x[i] = b[i];     // x[i] <- b[i]
+    }
+
+    // {iterações de Jacobi}
+    while (true) {
+        k = k + 1; // k <- k + 1
+        
+        for (int i = 0; i < n; i++) {
+            double soma = 0; // soma <- 0
+            for (int j = 0; j < n; j++) {
+                if (i != j) {
+                    soma = soma + A[i][j] * x[j]; // soma <- soma + A[i][j] * x[j]
+                }
+            }
+            v[i] = b[i] - soma; // v[i] <- b[i] - soma
+        }
+
+        double norma = calcula_norma(n, x, v); // norma <- calcula_norma(n,x,v)
+        
+        // Saída de controle
+        cout << "Iteracao k=" << k << " | Norma=" << norma << endl;
+
+        // se norma <= epsilon ou k >= iterMax então interrompa
+        if (norma <= epsilon || k >= iterMax) {
+            break;
+        }
+    }
+
+    return x; // Retorna o vetor solução x
+}
