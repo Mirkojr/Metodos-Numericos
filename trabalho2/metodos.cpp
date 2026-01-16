@@ -1,12 +1,5 @@
 #include "metodos.h"
 
-// Estrutura para armazenar dados de cada iteração
-struct DadosIteracao {
-    int k;
-    double norma;
-    vector<double> x;
-};
-
 double calcula_norma(int n, vector<double> &x, vector<double> &v) {
     double normaNum = 0.0;
     double normaDen = 0.0;
@@ -28,7 +21,7 @@ double calcula_norma(int n, vector<double> &x, vector<double> &v) {
     return norma;
 }
 
-vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, double epsilon, int iterMax, vector<DadosIteracao>* historico = nullptr) {
+vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, double epsilon, int iterMax, vector<DadosIteracao>* historico) {
     vector<double> x(n);
     vector<double> v(n);
     int k = 0;
@@ -76,7 +69,7 @@ vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, d
 }
 
 // Algoritmo principal: Gauss_Seidel (conforme Fonte [2])
-vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, double e, int iterMax, vector<DadosIteracao>* historico = nullptr) {
+vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, double e, int iterMax, vector<DadosIteracao>* historico) {
     vector<double> x(n);
     vector<double> v(n);
 
