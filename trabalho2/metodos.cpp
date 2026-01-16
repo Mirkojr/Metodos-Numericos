@@ -1,35 +1,11 @@
 #include "metodos.h"
 
-vector<vector<double>> calcula_inversa(int n, vector<vector<double>> A) {
-    // Criar a matriz identidade I
-    vector<vector<double>> I(n, vector<double>(n, 0));
-    for (int i = 0; i < n; i++) {
-        I[i][i] = 1;
-    }
-
-    // Aplicar o método de Gauss-Jordan
-    for (int i = 0; i < n; i++) {
-        // Tornar o elemento A[i][i] igual a 1 e ajustar a matriz I
-        double diag = A[i][i];
-        for (int j = 0; j < n; j++) {
-            A[i][j] /= diag;
-            I[i][j] /= diag;
-        }
-
-        // Tornar os outros elementos da coluna i iguais a 0
-        for (int k = 0; k < n; k++) {
-            if (k != i) {
-                double factor = A[k][i];
-                for (int j = 0; j < n; j++) {
-                    A[k][j] -= A[i][j] * factor;
-                    I[k][j] -= I[i][j] * factor;
-                }
-            }
-        }
-    }
-
-    return I;
-}
+// Estrutura para armazenar dados de cada iteração
+struct DadosIteracao {
+    int k;
+    double norma;
+    vector<double> x;
+};
 
 double calcula_norma(int n, vector<double> &x, vector<double> &v) {
     double normaNum = 0.0;
@@ -52,7 +28,7 @@ double calcula_norma(int n, vector<double> &x, vector<double> &v) {
     return norma;
 }
 
-vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, double epsilon, int iterMax) {
+vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, double epsilon, int iterMax, vector<DadosIteracao>* historico = nullptr) {
     vector<double> x(n);
     vector<double> v(n);
     int k = 0;
@@ -68,8 +44,6 @@ vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, d
         b[i] = b[i] * r; // b[i] <- b[i] * r
         x[i] = b[i];     // x[i] <- b[i]
     }
-
-    cout << fixed << setprecision(6);
 
     // {iterações de Jacobi}
     while (true) {
@@ -87,11 +61,10 @@ vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, d
 
         double norma = calcula_norma(n, x, v); // norma <- calcula_norma(n,x,v)
         
-        // Saída de controle
-        // cout << "Iteracao k=" << k << " | Norma=" << norma << endl;
-        cout << "Iteracao k=" << k << " | Norma: " << norma << " | x: ";
-        for (double val : x) cout << val << " ";
-        cout << endl;
+        // Saída de debug
+        if (historico != nullptr) {
+            historico->push_back({k, norma, x});
+        }
 
         // se norma <= epsilon ou k >= iterMax então interrompa
         if (norma <= epsilon || k >= iterMax) {
@@ -103,7 +76,7 @@ vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, d
 }
 
 // Algoritmo principal: Gauss_Seidel (conforme Fonte [2])
-vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, double e, int iterMax) {
+vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, double e, int iterMax, vector<DadosIteracao>* historico = nullptr) {
     vector<double> x(n);
     vector<double> v(n);
 
@@ -121,8 +94,6 @@ vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, d
 
     int k = 0;
     double norma;
-
-    cout << fixed << setprecision(6);
 
     // 2. Iterações de Gauss-Seidel [2]
     do {
@@ -142,9 +113,9 @@ vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, d
         // 3. Cálculo da norma de erro relativo [2, 3]
         norma = calcula_norma(n, v, x);
 
-        cout << "Iteracao k=" << k << " | Norma: " << norma << " | x: ";
-        for (double val : x) cout << val << " ";
-        cout << endl;
+        if (historico != nullptr) {
+            historico->push_back({k, norma, x});
+        }
 
         // 4. Critério de parada: precisão alcançada ou limite de iterações [2, 5]
         if (norma <= e || k >= iterMax) {
@@ -162,5 +133,57 @@ void printa_matriz(int n, vector<vector<double>> M) {
         cout << M[i][j] << " ";
         }
         cout << endl;
+    }
+}
+
+vector<vector<double>> calculaInversaJacobi(int n, vector<vector<double>> A, double epsilon, int iterMax) {
+    vector<double> b_aux(n, 0.0);
+    vector<vector<double>> matrizInversa(n, vector<double>(n, 0.0));
+
+    for( int j = 0; j < n; j++ ) {
+        b_aux[j] = 1.0;
+        vector<double> coluna_inversa = Gauss_Jacobi(n, A, b_aux, epsilon, iterMax, nullptr);
+        b_aux[j] = 0.0;
+
+        for( int i = 0; i < n; i++ ) {
+            matrizInversa[i][j] = coluna_inversa[i];
+        }
+    }
+    return matrizInversa;
+}
+
+vector<vector<double>> calculaInversaSeidel(int n, vector<vector<double>> A, double epsilon, int iterMax) {
+    vector<double> b_aux(n, 0.0);
+    vector<vector<double>> matrizInversa(n, vector<double>(n, 0.0));
+
+    for( int j = 0; j < n; j++ ) {
+        b_aux[j] = 1.0;
+        vector<double> coluna_inversa = Gauss_Seidel(n, A, b_aux, epsilon, iterMax, nullptr);
+        b_aux[j] = 0.0;
+
+        for( int i = 0; i < n; i++ ) {
+            matrizInversa[i][j] = coluna_inversa[i];
+        }
+    }
+    return matrizInversa;
+}
+
+vector<double> multiplicarMatrixVetor(int n, vector<vector<double>> M, vector<double> v) {
+    vector<double> resultado(n, 0.0);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            resultado[i] += M[i][j] * v[j];
+        }
+    }
+
+    return resultado;
+}
+
+void printa_historico(const vector<DadosIteracao>& h) {
+    for(const auto& reg : h) {
+        cout << "k=" << reg.k << " | Norma: " << reg.norma << " | x: [ ";
+        for(double val : reg.x) cout << val << " ";
+        cout << "]" << endl;
     }
 }
