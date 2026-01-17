@@ -180,3 +180,83 @@ void printa_historico(const vector<DadosIteracao>& h) {
         cout << "]" << endl;
     }
 }
+
+void le_matriz(int n, vector<vector<double>>& A) {
+    cout << "Digite os elementos da matriz A (" << n << "x" << n << ") linha por linha:\n";
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            cin >> A[i][j];
+        }
+    }
+}
+
+void le_vetor(int n, vector<double>& b) {
+    cout << "Digite os " << n << " elementos do vetor b:\n";
+    for (int i = 0; i < n; ++i) cin >> b[i];
+}
+
+void printa_vetor(const vector<double>& v) {
+    cout << "[ ";
+    for (double x : v) cout << fixed << setprecision(3) << x << " ";
+    cout << "]\n";
+}
+
+void produto_e_imprime(int n, const vector<vector<double>>& M, const vector<vector<double>>& Inv, const vector<double>& b) {
+    cout << "A * A^{-1} (aprox):\n";
+    vector<vector<double>> prod(n, vector<double>(n, 0.0));
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < n; ++j)
+            for (int k = 0; k < n; ++k)
+                prod[i][j] += M[i][k] * Inv[k][j];
+    printa_matriz(n, prod);
+    if (!b.empty()) {
+        cout << "Checando A^{-1} * b:\n";
+        vector<double> vb(n, 0.0);
+        for (int i = 0; i < n; ++i)
+            for (int j = 0; j < n; ++j)
+                vb[i] += Inv[i][j] * b[j];
+        printa_vetor(vb);
+    }
+}
+
+void limpa_tela() {
+    // limpa a tela do console (funciona na maioria dos terminais)
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
+
+void menu() {
+    cout << "\n--- Menu ---\n";
+    cout << "1) Resolver Ax=b por Gauss-Jacobi (mostrar historico)\n";
+    cout << "2) Resolver Ax=b por Gauss-Seidel (mostrar historico)\n";
+    cout << "3) Calcular A^{-1} por Jacobi\n";
+    cout << "4) Calcular A^{-1} por Gauss-Seidel\n";
+    cout << "5) Checar A * A^{-1} e A^{-1} * b (se A^{-1} disponivel)\n";
+    cout << "6) Calibracao simples: variar b e resolver metodos\n";
+    cout << "7) Imprimir A e b\n";
+    cout << "0) Sair\n";
+    cout << "Escolha: ";
+}
+
+void printa_matriz_e_vetor(int n,vector<vector<double>> A, vector<double> b) {
+
+    cout << fixed << setprecision(2);
+
+    for ( int i=0; i<n; i++) {
+
+        // matriz
+        i==(int)n/2 ? cout << "A = " : cout << "    ";
+
+        i == 0 ? cout << "┌ ": cout << "│ ";
+
+        for ( int j=0; j<n; j++) {
+            cout << A[i][j] << " ";
+        }
+        // vetor
+        i==(int)n/2 ? cout << " │ b = " : cout << " │     ";  
+        cout << "│ " << b[i] << " │ " << endl;
+    }
+}
