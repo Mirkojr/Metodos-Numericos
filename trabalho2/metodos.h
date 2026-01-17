@@ -1,3 +1,6 @@
+#ifndef METODOS_H
+#define METODOS_H
+
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -22,3 +25,5 @@ vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, d
 
 void printa_matriz(int n, vector<vector<double>> M);
 void printa_historico(const vector<struct DadosIteracao>& h);
+
+#endif // METODOS_H
