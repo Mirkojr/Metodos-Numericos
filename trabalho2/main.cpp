@@ -17,6 +17,10 @@ int main() {
     //Configuração e Entrada de Dados
     lerDadosEntrada(n, A, b, epsilon, iterMax);
 
+    imprimirMatrizEstilizada(n, A, "MATRIZ DO SISTEMA (A)");
+    imprimirResultadoVetor("VETOR DO SISTEMA (b)", b);
+    cout << endl;
+
     // Análise de Matrizes Inversas
     vector<vector<double>> invJacobi = calculaInversaJacobi(n, A, epsilon, iterMax);
     vector<vector<double>> invSeidel = calculaInversaSeidel(n, A, epsilon, iterMax);
@@ -25,6 +29,10 @@ int main() {
     cout << endl;
     imprimirMatrizEstilizada(n, invSeidel, "MATRIZ INVERSA (GAUSS-SEIDEL)");
 
+    vector<double> resJacobi = multiplicarMatrixVetor(n, invJacobi, b);
+    vector<double> resSeidel = multiplicarMatrixVetor(n, invSeidel, b);
+
+    quadroResultadosVetor(resJacobi, resSeidel);
 
     // Execução dos Métodos Iterativos
     vector<DadosIteracao> histJ, histS; 
@@ -41,8 +49,10 @@ int main() {
     quadroResumoSistemas(tabela, histJ.back(), histS.back());
 
     // Análise Final de Segurança
-    mostrarAnaliseSismica(n, solS);
+    mostrarAnaliseSismica(n, solS, "Gauss-Seidel");
+    mostrarAnaliseSismica(n, solJ, "Gauss-Jacobi");
 
+    // opcional: printa histórico de iterações
     // printa_historico(histJ);
     // printa_historico(histS);
     

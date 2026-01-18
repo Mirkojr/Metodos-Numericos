@@ -12,12 +12,16 @@ struct LinhaSistema {
     double valSeidel;
 };
 
-// Protótipos das funções de exibição
 void imprimirRepetido(string s, int n);
 void imprimirMatrizEstilizada(int n, const vector<vector<double>>& M, string titulo);
+void imprimirResultadoVetor(const string& titulo, const vector<double>& v);
+void printa_historico(const vector<struct DadosIteracao>& h);
+
 void quadroResumoSistemas(const vector<LinhaSistema>& tabela, DadosIteracao ultimoJ, DadosIteracao ultimoS);
-void mostrarAnaliseSismica(int n, const vector<double>& deslocamentos);
+void quadroResultadosVetor(const vector<double>& resJacobi, const vector<double>& resSeidel);
+void mostrarAnaliseSismica(int n, const vector<double>& deslocamentos, string titulo);
 void exibirCabecalhoPrincipal();
+
 void lerDadosEntrada(int& n, vector<vector<double>>& A, vector<double>& b, double& epsilon, int& iterMax);
 
 #endif

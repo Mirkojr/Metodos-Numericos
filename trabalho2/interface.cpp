@@ -91,20 +91,65 @@ void quadroResumoSistemas(const vector<LinhaSistema>& tabela, DadosIteracao ulti
     cout << "╰──────────┴────────────────────────────────────────┴────────────────────────────────────────────╯" << endl;
 }
 
-void mostrarAnaliseSismica(int n, const vector<double>& deslocamentos) {
-    cout << "\n╭────────────────── ANÁLISE DE INTEGRIDADE SÍSMICA ──────────────────╮" << endl;
+void mostrarAnaliseSismica(int n, const vector<double>& deslocamentos, string titulo) {
+    const int LARGURA_TOTAL = 90;
+    const int ESPACO_INTERNO = LARGURA_TOTAL - 3;
+
+    string textoTopo = " ANÁLISE DE INTEGRIDADE SÍSMICA (" + titulo + ") ";
+    int hifens = (LARGURA_TOTAL - 2 - textoTopo.length()) / 2;
+    
+    cout << "\n╭";
+    imprimirRepetido("─", hifens);
+    cout << textoTopo;
+    imprimirRepetido("─", LARGURA_TOTAL - 2 - hifens - textoTopo.length());
+    cout << "╮" << endl;
+
     bool perigo = false;
     for (int i = 0; i < n; i++) {
         if (abs(deslocamentos[i]) > 0.4) { 
             stringstream ss;
             ss << "[ALERTA] Deslocamento d" << i+1 
-            << " (" << fixed << setprecision(6) << deslocamentos[i] << " cm) excede o limite!";
+               << " (" << fixed << setprecision(6) << deslocamentos[i] << " cm) excede o limite!";
 
-            cout << "│ " << left << setw(67) << ss.str() << "│" << endl;
-            
+            cout << "│ " << left << setw(ESPACO_INTERNO - 2) << ss.str() << "│" << endl;
             perigo = true;
         }
     }
-    if(!perigo) cout << "│ [OK] Todos os deslocamentos estão dentro da zona de segurança.     │" << endl;
+
+    if (!perigo) {
+        cout << "│ " << left << setw(ESPACO_INTERNO) << "[OK] Todos os deslocamentos estão dentro da zona de segurança." << "│" << endl;
+    }
+
+    cout << "╰"; imprimirRepetido("─", LARGURA_TOTAL - 4); cout << "╯" << endl;
+}
+
+void printa_historico(const vector<DadosIteracao>& h) {
+    for(const auto& reg : h) {
+        cout << "k=" << reg.k << " | Norma: " << reg.norma << " | x: [ ";
+        for(double val : reg.x) cout << val << " ";
+        cout << "]" << endl;
+    }
+}
+
+
+void imprimirResultadoVetor(const string& rotulo, const vector<double>& v) {
+    stringstream ss;
+    ss << "➤ " << rotulo << ": [ ";
+    for (size_t i = 0; i < v.size(); i++) {
+        ss << fixed << setprecision(6) << v[i] << (i == v.size() - 1 ? "" : ", ");
+    }
+    ss << " ]";
+
+    cout << "│ " << left << setw(68) << ss.str() << " │" << endl;
+}
+
+void quadroResultadosVetor(const vector<double>& resJacobi, const vector<double>& resSeidel) {
+    cout << "\n╭────────────────────────────────────────────────────────────────────╮" << endl;
+    cout << "│               RESULTADO: MATRIZ INVERSA * VETOR B                  │" << endl;
+    cout << "├────────────────────────────────────────────────────────────────────┤" << endl;
+
+    imprimirResultadoVetor("Resultado (Jacobi)", resJacobi);
+    imprimirResultadoVetor("Resultado (Seidel)", resSeidel);
+
     cout << "╰────────────────────────────────────────────────────────────────────╯" << endl;
 }

@@ -120,15 +120,6 @@ vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, d
     return x;
 }
 
-void printa_matriz(int n, vector<vector<double>> M) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-        cout << M[i][j] << " ";
-        }
-        cout << endl;
-    }
-}
-
 vector<vector<double>> calculaInversaJacobi(int n, vector<vector<double>> A, double epsilon, int iterMax) {
     vector<double> b_aux(n, 0.0);
     vector<vector<double>> matrizInversa(n, vector<double>(n, 0.0));
@@ -173,10 +164,4 @@ vector<double> multiplicarMatrixVetor(int n, vector<vector<double>> M, vector<do
     return resultado;
 }
 
-void printa_historico(const vector<DadosIteracao>& h) {
-    for(const auto& reg : h) {
-        cout << "k=" << reg.k << " | Norma: " << reg.norma << " | x: [ ";
-        for(double val : reg.x) cout << val << " ";
-        cout << "]" << endl;
-    }
-}
+
