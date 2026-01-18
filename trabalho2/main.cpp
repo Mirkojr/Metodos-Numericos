@@ -22,8 +22,9 @@ int main() {
     cout << endl;
 
     // Análise de Matrizes Inversas
-    vector<vector<double>> invJacobi = calculaInversaJacobi(n, A, epsilon, iterMax);
-    vector<vector<double>> invSeidel = calculaInversaSeidel(n, A, epsilon, iterMax);
+    vector<DadosIteracao> histInvJ, histInvS;
+    vector<vector<double>> invJacobi = calculaInversaJacobi(n, A, epsilon, iterMax, &histInvJ);
+    vector<vector<double>> invSeidel = calculaInversaSeidel(n, A, epsilon, iterMax, &histInvS);
 
     imprimirMatrizEstilizada(n, invJacobi, "MATRIZ INVERSA (GAUSS-JACOBI)");
     cout << endl;
@@ -33,6 +34,9 @@ int main() {
     vector<double> resSeidel = multiplicarMatrixVetor(n, invSeidel, b);
 
     quadroResultadosVetor(resJacobi, resSeidel);
+    cout << endl;
+    printa_historico(histInvJ, "Histórico de Cálculo da Inversa - Gauss-Jacobi");
+    printa_historico(histInvS, "Histórico de Cálculo da Inversa - Gauss-Seidel");
 
     // Execução dos Métodos Iterativos
     vector<DadosIteracao> histJ, histS; 
@@ -52,9 +56,9 @@ int main() {
     mostrarAnaliseSismica(n, solS, "Gauss-Seidel");
     mostrarAnaliseSismica(n, solJ, "Gauss-Jacobi");
 
-    // opcional: printa histórico de iterações
-    // printa_historico(histJ);
-    // printa_historico(histS);
-    
+    // Printa histórico de iterações
+    printa_historico(histJ, "Histórico de Iterações - Gauss-Jacobi");
+    printa_historico(histS, "Histórico de Iterações - Gauss-Seidel");
+
     return 0;
 }

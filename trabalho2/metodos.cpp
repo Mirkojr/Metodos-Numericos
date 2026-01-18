@@ -68,12 +68,12 @@ vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, d
     return x; // Retorna o vetor solução x
 }
 
-// Algoritmo principal: Gauss_Seidel (conforme Fonte [2])
+// Algoritmo principal: Gauss_Seidel
 vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, double e, int iterMax, vector<DadosIteracao>* historico) {
     vector<double> x(n);
     vector<double> v(n);
 
-    // 1. Construção da matriz e do vetor de iterações inicial [2]
+    // Construção da matriz e do vetor de iterações inicial 
     for (int i = 0; i < n; i++) {
         double r = 1.0 / A[i][i];
         for (int j = 0; j < n; j++) {
@@ -82,35 +82,36 @@ vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, d
             }
         }
         b[i] = b[i] * r;
-        x[i] = b[i]; // Aproximação inicial xi = bi/aii [2, 4]
+        x[i] = b[i]; // Aproximação inicial xi = bi/aii 
     }
 
     int k = 0;
     double norma;
 
-    // 2. Iterações de Gauss-Seidel [2]
+    // Iterações de Gauss-Seidel 
     do {
         k = k + 1;
         for (int i = 0; i < n; i++) {
             double soma = 0;
             for (int j = 0; j < n; j++) {
                 if (i != j) {
-                    // Diferente de Jacobi, Seidel usa os valores de x já atualizados [1]
+                    // Diferente de Jacobi, Seidel usa os valores de x já atualizados 
                     soma = soma + A[i][j] * x[j];
                 }
             }
-            v[i] = x[i];          // Guarda o valor anterior para o cálculo da norma [2]
-            x[i] = b[i] - soma;   // Atualiza x[i] imediatamente [2]
+            v[i] = x[i];          // Guarda o valor anterior para o cálculo da norma
+            x[i] = b[i] - soma;   // Atualiza x[i] imediatamente 
         }
 
-        // 3. Cálculo da norma de erro relativo [2, 3]
+        // Cálculo da norma de erro relativo 
         norma = calcula_norma(n, v, x);
 
+        // Armazena o histórico
         if (historico != nullptr) {
             historico->push_back({k, norma, x});
         }
 
-        // 4. Critério de parada: precisão alcançada ou limite de iterações [2, 5]
+        // Critério de parada: precisão alcançada ou limite de iterações 
         if (norma <= e || k >= iterMax) {
             break;
         }
@@ -120,13 +121,13 @@ vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, d
     return x;
 }
 
-vector<vector<double>> calculaInversaJacobi(int n, vector<vector<double>> A, double epsilon, int iterMax) {
+vector<vector<double>> calculaInversaJacobi(int n, vector<vector<double>> A, double epsilon, int iterMax, vector<DadosIteracao>* historico) {
     vector<double> b_aux(n, 0.0);
     vector<vector<double>> matrizInversa(n, vector<double>(n, 0.0));
 
     for( int j = 0; j < n; j++ ) {
         b_aux[j] = 1.0;
-        vector<double> coluna_inversa = Gauss_Jacobi(n, A, b_aux, epsilon, iterMax, nullptr);
+        vector<double> coluna_inversa = Gauss_Jacobi(n, A, b_aux, epsilon, iterMax, historico);
         b_aux[j] = 0.0;
 
         for( int i = 0; i < n; i++ ) {
@@ -136,13 +137,13 @@ vector<vector<double>> calculaInversaJacobi(int n, vector<vector<double>> A, dou
     return matrizInversa;
 }
 
-vector<vector<double>> calculaInversaSeidel(int n, vector<vector<double>> A, double epsilon, int iterMax) {
+vector<vector<double>> calculaInversaSeidel(int n, vector<vector<double>> A, double epsilon, int iterMax, vector<DadosIteracao>* historico) {
     vector<double> b_aux(n, 0.0);
     vector<vector<double>> matrizInversa(n, vector<double>(n, 0.0));
 
     for( int j = 0; j < n; j++ ) {
         b_aux[j] = 1.0;
-        vector<double> coluna_inversa = Gauss_Seidel(n, A, b_aux, epsilon, iterMax, nullptr);
+        vector<double> coluna_inversa = Gauss_Seidel(n, A, b_aux, epsilon, iterMax, historico);
         b_aux[j] = 0.0;
 
         for( int i = 0; i < n; i++ ) {

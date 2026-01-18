@@ -123,12 +123,52 @@ void mostrarAnaliseSismica(int n, const vector<double>& deslocamentos, string ti
     cout << "╰"; imprimirRepetido("─", LARGURA_TOTAL - 4); cout << "╯" << endl;
 }
 
-void printa_historico(const vector<DadosIteracao>& h) {
-    for(const auto& reg : h) {
-        cout << "k=" << reg.k << " | Norma: " << reg.norma << " | x: [ ";
-        for(double val : reg.x) cout << val << " ";
-        cout << "]" << endl;
+void printa_historico(const vector<DadosIteracao>& h, string titulo) {
+    if (h.empty()) return;
+
+    // Cabeçalho
+    cout << "\n╭──────┬──────────────┬──────────────────────────────────────────────────────╮" << endl;
+
+    // Calcula o tamanho VISUAL da string (ignorando bytes extras de acentos UTF-8)
+    int tamanho_visual = 0;
+    for (unsigned char c : titulo) {
+        if ((c & 0xC0) != 0x80) tamanho_visual++;
     }
+
+    // A largura interna total é 74. Calculamos quanto falta preencher.
+    int espacos_restantes = 74 - tamanho_visual;
+
+    // Imprime
+    cout << "│ " << titulo;
+    for (int i = 0; i < espacos_restantes; i++) cout << " "; 
+    cout << " │" << endl;
+    cout << "├──────┼──────────────┼──────────────────────────────────────────────────────┤" << endl;
+    cout << "│  k   │    Norma     │                 Vetor Solução (x)                    │" << endl;
+    cout << "├──────┼──────────────┼──────────────────────────────────────────────────────┤" << endl;
+
+    for (const auto& reg : h) {
+        // Imprime k e Norma
+        cout << "│ " << setw(4) << right << reg.k << " │ ";
+        cout << scientific << setprecision(4) << setw(12) << reg.norma << " │ ";
+
+        // Monta o Vetor Alinhado
+        stringstream ss;
+        ss << "[ "; 
+        for (size_t i = 0; i < reg.x.size(); ++i) {
+
+            // Isso alinha os sinais de menos e as vírgulas.
+            ss << fixed << setw(8) << setprecision(4) << reg.x[i];
+            
+            // Adiciona a vírgula apenas se não for o último
+            ss << (i == reg.x.size() - 1 ? "" : ", ");
+        }
+        ss << " ]";
+
+        // Imprime o vetor montado preenchendo o resto da tabela com espaços
+        cout << left << setw(52) << ss.str() << " │" << endl;
+    }
+
+    cout << "╰──────┴──────────────┴──────────────────────────────────────────────────────╯" << endl;
 }
 
 
