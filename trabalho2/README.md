@@ -25,6 +25,7 @@ d) Fornecer um quadro resposta para cada método, variando os valores de [A] e d
 e) Analisar o que vai acontecer nas ondas sismicas, para esse sistema mencionado abaixo.        
 
 <!-- nao sei latex -->
+<!-- essa parte nao mostra no github :/ -->
 $$
 [A] =
 \begin{bmatrix}
@@ -134,9 +135,98 @@ O código acompanha um **Makefile** para automatizar a compilação. A maioria d
         norma ← normaNum/normaDen
     fim algoritmo
     ```
-* Código
+* Código - algoritmo auxiliar
     ```cpp
+    double calcula_norma(int n, vector<double> &x, vector<double> &v) {
+        double normaNum = 0.0;
+        double normaDen = 0.0;
+
+        for (int i = 0; i < n; ++i) {
+            double t = abs(v[i] - x[i]);
+            if (t > normaNum) {
+                normaNum = t;
+            }
+            if (abs(v[i]) > normaDen) {
+                normaDen = abs(v[i]);
+            }
+
+            // Atualiza o vetor x com o vetor v
+            x[i] = v[i];
+        }
+
+        double norma = normaNum / normaDen;
+        return norma;
+    }
     ```
+
+* Código - Método
+    ```cpp
+    vector<double> Gauss_Jacobi(int n, vector<vector<double>> A, vector<double> b, double epsilon, int iterMax, vector<DadosIteracao>* historico) {
+        vector<double> x(n);
+        vector<double> v(n);
+        int k = 0;
+
+        // {construção da matriz e do vetor de iterações}
+        for (int i = 0; i < n; i++) {
+            double r = 1.0 / A[i][i]; // r <- 1/A[i][i]
+            for (int j = 0; j < n; j++) {
+                if (i != j) {
+                    A[i][j] = A[i][j] * r; // A[i][j] <- A[i][j] * r
+                }
+            }
+            b[i] = b[i] * r; // b[i] <- b[i] * r
+            x[i] = b[i];     // x[i] <- b[i]
+        }
+
+        // {iterações de Jacobi}
+        while (true) {
+            k = k + 1; // k <- k + 1
+            
+            for (int i = 0; i < n; i++) {
+                double soma = 0; // soma <- 0
+                for (int j = 0; j < n; j++) {
+                    if (i != j) {
+                        soma = soma + A[i][j] * x[j]; // soma <- soma + A[i][j] * x[j]
+                    }
+                }
+                v[i] = b[i] - soma; // v[i] <- b[i] - soma
+            }
+
+            double norma = calcula_norma(n, x, v); // norma <- calcula_norma(n,x,v)
+            
+            // Saída de debug
+            if (historico != nullptr) {
+                historico->push_back({k, norma, x});
+            }
+
+            // se norma <= epsilon ou k >= iterMax então interrompa
+            if (norma <= epsilon || k >= iterMax) {
+                break;
+            }
+        }
+
+        return x; // Retorna o vetor solução x
+    }
+    ```
+* Código - Cálculo da inversa
+    ```cpp
+    vector<vector<double>> calculaInversaJacobi(int n, vector<vector<double>> A, double epsilon, int iterMax) {
+        vector<double> b_aux(n, 0.0);
+        vector<vector<double>> matrizInversa(n, vector<double>(n, 0.0));
+
+        for( int j = 0; j < n; j++ ) {
+            b_aux[j] = 1.0;
+            vector<double> coluna_inversa = Gauss_Jacobi(n, A, b_aux, epsilon, iterMax, nullptr);
+            b_aux[j] = 0.0;
+
+            for( int i = 0; i < n; i++ ) {
+                matrizInversa[i][j] = coluna_inversa[i];
+            }
+        }
+        return matrizInversa;
+    }
+    ```
+
 
 #### Método de Gauss-Seidel
 
@@ -177,6 +267,7 @@ O código acompanha um **Makefile** para automatizar a compilação. A maioria d
         fim repita
     fim algoritmo
     ```
+
 * Algoritmo Auxiliar
     ```
     Algoritmo: calcula_norma
@@ -195,16 +286,86 @@ O código acompanha um **Makefile** para automatizar a compilação. A maioria d
     fim algoritmo
     ```
 
-* Código
+* Código - Método
     ```cpp
+    vector<double> Gauss_Seidel(int n, vector<vector<double>> A, vector<double> b, double e, int iterMax, vector<DadosIteracao>* historico) {
+        vector<double> x(n);
+        vector<double> v(n);
+
+        // 1. Construção da matriz e do vetor de iterações inicial
+        for (int i = 0; i < n; i++) {
+            double r = 1.0 / A[i][i];
+            for (int j = 0; j < n; j++) {
+                if (i != j) {
+                    A[i][j] = A[i][j] * r;
+                }
+            }
+            b[i] = b[i] * r;
+            x[i] = b[i]; // Aproximação inicial xi = bi/aii
+        }
+
+        int k = 0;
+        double norma;
+
+        // 2. Iterações de Gauss-Seidel
+        do {
+            k = k + 1;
+            for (int i = 0; i < n; i++) {
+                double soma = 0;
+                for (int j = 0; j < n; j++) {
+                    if (i != j) {
+                        // Diferente de Jacobi, Seidel usa os valores de x já atualizados
+                        soma = soma + A[i][j] * x[j];
+                    }
+                }
+                v[i] = x[i];          // Guarda o valor anterior para o cálculo da norma
+                x[i] = b[i] - soma;   // Atualiza x[i] imediatamente
+            }
+
+            // 3. Cálculo da norma de erro relativo
+            norma = calcula_norma(n, v, x);
+
+            if (historico != nullptr) {
+                historico->push_back({k, norma, x});
+            }
+
+            // 4. Critério de parada: precisão alcançada ou limite de iterações
+            if (norma <= e || k >= iterMax) {
+                break;
+            }
+
+        } while (true);
+
+        return x;
+    }
+    ```
+
+* Código - Cálculo da inversa
+    ```cpp
+    vector<vector<double>> calculaInversaSeidel(int n, vector<vector<double>> A, double epsilon, int iterMax) {
+        vector<double> b_aux(n, 0.0);
+        vector<vector<double>> matrizInversa(n, vector<double>(n, 0.0));
+
+        for( int j = 0; j < n; j++ ) {
+            b_aux[j] = 1.0;
+            vector<double> coluna_inversa = Gauss_Seidel(n, A, b_aux, epsilon, iterMax, nullptr);
+            b_aux[j] = 0.0;
+
+            for( int i = 0; i < n; i++ ) {
+                matrizInversa[i][j] = coluna_inversa[i];
+            }
+        }
+        return matrizInversa;
+    }
     ```
 
 ## Referências e links importantes
 
 1. Slides do Professor Joaquim Bento, disponibilizados no classroom da disciplina
+1. Calculadora online - Gauss-Seidel, [https://calculator-online.net/gauss-seidel-calculator/](https://calculator-online.net/gauss-seidel-calculator/)
+1. Calculadora online - Gauss-Jacobi, [https://www.mathros.net.ua/en/jacobi-method-calculator](https://www.mathros.net.ua/en/jacobi-method-calculator)
 1. Calculadora de Métodos online, [https://solve-it.pages.dev/#/home](https://solve-it.pages.dev/#/home)
 1. GCC the gnu compiler, [https://gcc.gnu.org/](https://gcc.gnu.org/)
 1. GNU Make, [https://www.gnu.org/software/make/](https://www.gnu.org/software/make/)
 1. Git, [https://git-scm.com/](https://git-scm.com/)
 1. GitHub, [https://github.com/](https://github.com/)
-
